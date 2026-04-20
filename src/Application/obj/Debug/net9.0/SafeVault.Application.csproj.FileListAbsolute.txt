@@ -1,0 +1,16 @@
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.csproj.AssemblyReference.cache
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.AssemblyInfoInputs.cache
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.AssemblyInfo.cs
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.csproj.CoreCompileInputs.cache
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\bin\Debug\net9.0\SafeVault.Application.deps.json
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\bin\Debug\net9.0\SafeVault.Application.dll
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\bin\Debug\net9.0\SafeVault.Application.pdb
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\bin\Debug\net9.0\SafeVault.Domain.dll
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\bin\Debug\net9.0\SafeVault.Domain.pdb
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVaul.E115D530.Up2Date
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.dll
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\refint\SafeVault.Application.dll
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.pdb
+c:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\ref\SafeVault.Application.dll
+C:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\src\Application\obj\Debug\net9.0\SafeVault.Application.sourcelink.json
