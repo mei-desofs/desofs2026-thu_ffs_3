@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+actor "E1\nUser" as E1
+rectangle "P0\nSafeVault API" as P0
+database "D1\nPostgreSQL" as D1
+folder "D2\nSistema de Ficheiros" as D2
+actor "E2\nConsumidor de Auditoria" as E2
+
+E1 --> P0 : F1/F3 Credenciais + pedidos\nHTTPS + JWT (TB-1)
+P0 --> E1 : F2/F4 Token + respostas\nHTTPS (TB-1)
+P0 --> D1 : F5 Escrita/Leitura\nmetadados (TB-2)
+D1 --> P0 : F6 Dados consultados (TB-2)
+P0 --> D2 : F7 Escrita ficheiros/logs (TB-3)
+D2 --> P0 : F8 Leitura ficheiros (TB-3)
+P0 --> E2 : F9 Exportação de logs\nHTTPS (TB-1)
+@enduml

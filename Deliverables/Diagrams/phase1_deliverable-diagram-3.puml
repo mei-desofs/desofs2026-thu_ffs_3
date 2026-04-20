@@ -1,0 +1,35 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+actor "E1\nUtilizador" as E1
+actor "E2\nConsumidor de Auditoria" as E2
+database "D1\nPostgreSQL" as D1
+folder "D2\nSistema de Ficheiros" as D2
+
+rectangle "P1\nAutenticação/Sessão" as P1
+rectangle "P2\nGestão de Utilizadores" as P2
+rectangle "P3\nGestão de Vaults" as P3
+rectangle "P4\nGestão de Documentos" as P4
+rectangle "P5\nAuditoria/Logging" as P5
+
+E1 --> P1 : Login/Renovação de sessão
+E1 --> P2 : CRUD Utilizadores (Admin)
+E1 --> P3 : CRUD Vaults
+E1 --> P4 : Upload/Download/Eliminação
+
+P1 --> D1
+P2 --> D1
+P3 --> D1
+P3 --> D2
+P4 --> D1
+P4 --> D2
+
+P1 --> P5
+P2 --> P5
+P3 --> P5
+P4 --> P5
+P5 --> D1 : Eventos de auditoria
+P5 --> D2 : Ficheiros de log
+P5 --> E2 : Exportação de logs
+@enduml

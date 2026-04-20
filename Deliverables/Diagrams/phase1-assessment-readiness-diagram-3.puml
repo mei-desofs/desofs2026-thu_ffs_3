@@ -1,0 +1,15 @@
+@startuml
+skinparam shadowing false
+
+actor Utilizador
+participant API
+participant ServicoAutenticacao
+database PostgreSQL
+
+Utilizador -> API : POST /api/auth/login
+API -> ServicoAutenticacao : Validar credenciais
+ServicoAutenticacao -> PostgreSQL : Obter utilizador + verificar hash
+PostgreSQL --> ServicoAutenticacao : Dados do utilizador
+ServicoAutenticacao --> API : JWT + refresh token
+API --> Utilizador : 200 OK + tokens
+@enduml

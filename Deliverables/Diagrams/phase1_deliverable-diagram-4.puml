@@ -1,0 +1,31 @@
+@startuml
+skinparam shadowing false
+
+actor "Manager/Viewer" as Utilizador
+database "D1\nPostgreSQL" as D1
+folder "D2\nSistema de Ficheiros" as D2
+
+rectangle "P4.1\nValidação de Upload" as P41
+rectangle "P4.2\nArmazenamento" as P42
+rectangle "P4.3\nRegisto de Metadados" as P43
+rectangle "P4.4\nAutorização de Acesso" as P44
+rectangle "P4.5\nServir Documento" as P45
+rectangle "P4.6\nEliminação" as P46
+
+Utilizador --> P41 : Upload de ficheiro
+P41 --> P42 : MIME/extensão/tamanho válidos
+P42 --> D2 : Escreve ficheiro (GUID)
+P42 --> P43 : SHA-256 + metadados
+P43 --> D1 : Persiste documento
+
+Utilizador --> P44 : Pedido de download/eliminação
+P44 --> D1 : Verifica permissões e ownership
+P44 --> P45 : Autorizado para download
+P45 --> D2 : Lê ficheiro
+P45 --> D1 : Lê hash esperado
+P45 --> Utilizador : Ficheiro ou erro de integridade
+
+P44 --> P46 : Autorizado para eliminação
+P46 --> D1 : Soft delete do registo
+P46 --> D2 : Remoção física do ficheiro
+@enduml

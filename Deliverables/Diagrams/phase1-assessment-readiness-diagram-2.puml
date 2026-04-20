@@ -1,0 +1,24 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+component "Controladores" as C
+component "Pipeline de Autenticação\nJWT + RBAC" as A
+component "Middlewares de Segurança\nHeaders + CSRF + Exceções" as M
+component "Serviços Aplicacionais" as S
+component "Serviço de Hash\nSHA-256" as H
+component "Registo de Auditoria" as AW
+component "Armazenamento de Ficheiros" as ST
+database "PostgreSQL" as DB
+folder "Armazenamento" as FS
+
+C --> A
+C --> M
+C --> S
+S --> H
+S --> AW
+S --> ST
+AW --> DB
+S --> DB
+ST --> FS
+@enduml

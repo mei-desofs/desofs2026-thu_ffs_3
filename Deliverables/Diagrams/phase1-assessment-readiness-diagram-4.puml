@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing false
+
+actor Utilizador
+participant API
+participant ServicoDocumento
+database PostgreSQL
+participant ArmazenamentoFicheiros
+
+Utilizador -> API : GET /api/documents/{id}
+API -> ServicoDocumento : Autorizar + obter metadados
+ServicoDocumento -> PostgreSQL : Obter documento + hash esperado
+ServicoDocumento -> ArmazenamentoFicheiros : Ler stream do ficheiro
+ArmazenamentoFicheiros --> ServicoDocumento : Stream
+ServicoDocumento -> ServicoDocumento : Calcular SHA-256 + comparar
+
+alt Hash válido
+	ServicoDocumento --> API : Stream do ficheiro
+	API --> Utilizador : 200 OK Ficheiro
+else Hash inválido
+	ServicoDocumento -> PostgreSQL : Registar falha de integridade
+	API --> Utilizador : 409 Erro de integridade
+end
+@enduml

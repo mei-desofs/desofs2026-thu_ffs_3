@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+rectangle "Entrada\n(credenciais/tokens/metadados)" as IN
+rectangle "Camada API" as API
+rectangle "Serviços Aplicacionais" as APP
+database "PostgreSQL\nutilizadores/tokens/auditoria" as DB
+folder "Ficheiros de Documentos" as FS
+rectangle "Logs Operacionais" as LOG
+rectangle "Saída\ndados sensíveis mínimos" as OUT
+
+IN --> API
+API --> APP
+APP --> DB
+APP --> FS
+APP --> LOG
+APP --> API
+API --> OUT
+@enduml

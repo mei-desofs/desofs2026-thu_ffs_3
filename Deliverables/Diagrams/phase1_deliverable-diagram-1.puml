@@ -1,0 +1,21 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor "Cliente\n(Admin/Manager/Viewer)" as Client
+component "Camada API\nASP.NET Core" as API
+component "Camada Aplicacional\nCasos de Uso / Serviços" as APP
+component "Camada de Domínio\nAgregados / Value Objects" as DOMAIN
+component "Camada de Infraestrutura\nEF Core / Storage / JWT / Logging" as INFRA
+database "PostgreSQL" as DB
+folder "Sistema de Ficheiros" as FS
+component "Consumidor de Auditoria Externo" as AUD
+
+Client --> API : HTTPS (TB-1)
+API --> APP
+APP --> DOMAIN
+APP --> INFRA
+INFRA --> DB : Metadados/Auditoria (TB-2)
+INFRA --> FS : Ficheiros/Logs (TB-3)
+API --> AUD : Exportação de logs HTTPS (TB-1)
+@enduml

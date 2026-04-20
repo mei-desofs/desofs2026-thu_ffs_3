@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+actor "Utilizador Externo" as U
+rectangle "SafeVault API" as API
+database "PostgreSQL" as DB
+folder "Sistema de Ficheiros" as FS
+actor "Consumidor de Auditoria Externo" as AUD
+
+U --> API : TB-1 HTTPS
+API --> AUD : TB-1 HTTPS
+API --> DB : TB-2
+API --> FS : TB-3
+@enduml
