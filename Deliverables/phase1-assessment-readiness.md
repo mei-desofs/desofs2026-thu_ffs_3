@@ -108,33 +108,23 @@ Este documento consolida a evidencia necessaria para a avaliacao de M1 (Phase 1)
 
 ### 8.1 Trust Boundaries
 
-Ficheiro: [diagrams/phase1-trust-boundaries.puml](diagrams/phase1-trust-boundaries.puml)
-
-<!-- TODO: diagrama a inserir -->
+![Trust Boundaries do SafeVault](Diagrams/phase1-assessment-readiness-diagram-1.png)
 
 ### 8.2 Arquitectura de Seguranca por Componentes
 
-Ficheiro: [diagrams/phase1-security-architecture.puml](diagrams/phase1-security-architecture.puml)
-
-<!-- TODO: diagrama a inserir -->
+![Arquitectura de Seguranca por Componentes](Diagrams/phase1-assessment-readiness-diagram-2.png)
 
 ### 8.3 Sequencia de Autenticacao e Emissao de Token
 
-Ficheiro: [diagrams/phase1-login-sequence.puml](diagrams/phase1-login-sequence.puml)
-
-<!-- TODO: diagrama a inserir -->
+![Sequencia de Autenticacao e Emissao de Token](Diagrams/phase1-assessment-readiness-diagram-3.png)
 
 ### 8.4 Sequencia de Download com Validacao de Integridade
 
-Ficheiro: [diagrams/phase1-download-sequence.puml](diagrams/phase1-download-sequence.puml)
-
-<!-- TODO: diagrama a inserir -->
+![Sequencia de Download com Validacao de Integridade SHA-256](Diagrams/phase1-assessment-readiness-diagram-4.png)
 
 ### 8.5 Fluxo de Dados Sensiveis
 
-Ficheiro: [diagrams/phase1-sensitive-data-flow.puml](diagrams/phase1-sensitive-data-flow.puml)
-
-<!-- TODO: diagrama a inserir -->
+![Fluxo de Dados Sensiveis no SafeVault](Diagrams/phase1-assessment-readiness-diagram-5.png)
 
 ---
 
