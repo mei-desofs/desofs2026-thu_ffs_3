@@ -1,0 +1,23 @@
+name: dast
+
+on:
+  workflow_dispatch:
+    inputs:
+      targetUrl:
+        description: "Target URL for DAST (e.g., https://staging.example.com)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  zap-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: ${{ inputs.targetUrl }}
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"

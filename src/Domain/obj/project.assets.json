@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\goncalo.barbosa\\Downloads\\DESOFT\\src\\Domain\\SafeVault.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\src\\Domain\\SafeVault.Domain.csproj",
       "projectName": "SafeVault.Domain",
-      "projectPath": "C:\\Users\\goncalo.barbosa\\Downloads\\DESOFT\\src\\Domain\\SafeVault.Domain.csproj",
+      "projectPath": "C:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\src\\Domain\\SafeVault.Domain.csproj",
       "packagesPath": "C:\\Users\\goncalo.barbosa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\goncalo.barbosa\\Downloads\\DESOFT\\src\\Domain\\obj\\",
+      "outputPath": "C:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\src\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

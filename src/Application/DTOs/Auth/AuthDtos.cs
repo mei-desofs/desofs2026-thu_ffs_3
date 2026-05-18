@@ -9,3 +9,5 @@ public record LoginRequest(string Email, string Password);
 public record RefreshTokenRequest(string RefreshToken);
 
 public record AuthResponse(string AccessToken, DateTime AccessTokenExpiresAtUtc, string RefreshToken, DateTime RefreshTokenExpiresAtUtc);
+
+public record CsrfTokenResponse(string Token, DateTime ExpiresAtUtc);

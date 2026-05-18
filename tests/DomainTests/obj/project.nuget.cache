@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "r1TV8gm9MC0=",
+  "dgSpecHash": "UeqGUJjynk0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\goncalo.barbosa\\Downloads\\DESOFT\\tests\\DomainTests\\SafeVault.DomainTests.csproj",
+  "projectFilePath": "C:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\tests\\DomainTests\\SafeVault.DomainTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\goncalo.barbosa\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",
     "C:\\Users\\goncalo.barbosa\\.nuget\\packages\\microsoft.codecoverage\\17.14.1\\microsoft.codecoverage.17.14.1.nupkg.sha512",

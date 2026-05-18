@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using SafeVault.Application.DTOs.Auth;
 using SafeVault.Application.IServices;
+using SafeVault.InterfaceAdapters;
 
 namespace SafeVault.InterfaceAdapters.Controllers;
 
 [ApiController]
 [Route("api/auth")]
 [EnableRateLimiting("AuthPolicy")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService, ICsrfTokenService csrfTokenService) : ControllerBase
 {
     [HttpPost("register")]
     [AllowAnonymous]
@@ -35,5 +36,14 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var result = await authService.RefreshTokenAsync(request, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpGet("csrf")]
+    [Authorize]
+    public ActionResult<CsrfTokenResponse> GetCsrfToken()
+    {
+        var userId = User.GetRequiredUserId();
+        var token = csrfTokenService.IssueToken(userId);
+        return Ok(new CsrfTokenResponse(token, DateTime.UtcNow.AddMinutes(30)));
     }
 }

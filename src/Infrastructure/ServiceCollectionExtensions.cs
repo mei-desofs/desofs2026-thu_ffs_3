@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPasswordHasher, PasswordHasherService>();
         services.AddScoped<IHashService, HashService>();
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddSingleton<ICsrfTokenService, CsrfTokenService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
         services.AddScoped<IAuditWriter, AuditWriterService>();
 

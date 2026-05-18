@@ -144,6 +144,62 @@ public class DocumentService(
         {
             throw new InvalidOperationException("Unsupported MIME type.");
         }
+
+        if (!request.Content.CanSeek)
+        {
+            throw new InvalidOperationException("Upload content stream must be seekable.");
+        }
+
+        if (!IsSignatureValid(request.Content, request.MimeType))
+        {
+            throw new InvalidOperationException("File content does not match MIME type.");
+        }
+    }
+
+    private static bool IsSignatureValid(Stream content, string mimeType)
+    {
+        var header = ReadHeader(content, 8);
+
+        if (mimeType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            var pdf = System.Text.Encoding.ASCII.GetBytes("%PDF-");
+            return header.Length >= pdf.Length && header.Take(pdf.Length).SequenceEqual(pdf);
+        }
+
+        if (mimeType.Equals("image/png", StringComparison.OrdinalIgnoreCase))
+        {
+            var png = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            return header.Length >= png.Length && header.Take(png.Length).SequenceEqual(png);
+        }
+
+        if (mimeType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase))
+        {
+            var jpeg = new byte[] { 0xFF, 0xD8, 0xFF };
+            return header.Length >= jpeg.Length && header.Take(jpeg.Length).SequenceEqual(jpeg);
+        }
+
+        if (mimeType.Equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", StringComparison.OrdinalIgnoreCase))
+        {
+            var zip = new byte[] { 0x50, 0x4B, 0x03, 0x04 };
+            return header.Length >= zip.Length && header.Take(zip.Length).SequenceEqual(zip);
+        }
+
+        if (mimeType.Equals("text/plain", StringComparison.OrdinalIgnoreCase))
+        {
+            var textSample = ReadHeader(content, 512);
+            return textSample.Length == 0 || !textSample.Contains((byte)0x00);
+        }
+
+        return false;
+    }
+
+    private static byte[] ReadHeader(Stream content, int length)
+    {
+        var buffer = new byte[length];
+        content.Position = 0;
+        var read = content.Read(buffer, 0, length);
+        content.Position = 0;
+        return read == buffer.Length ? buffer : buffer.Take(read).ToArray();
     }
 
     private static DocumentDto Map(Document document)

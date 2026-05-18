@@ -1,0 +1,47 @@
+# .NET build artifacts
+bin/
+obj/
+
+# Test results
+TestResults/
+**/TestResults/
+
+# User secrets and local settings
+**/secrets.json
+**/*.user
+**/*.suo
+**/*.userprefs
+**/*.csproj.user
+
+# Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Storage and uploads
+storage/
+storage-dev/
+
+# Coverage
+coverage/
+coverage.*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Node / tooling (if added later)
+node_modules/
+
+# Environment files
+.env
+.env.*

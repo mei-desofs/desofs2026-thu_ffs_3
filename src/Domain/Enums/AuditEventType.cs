@@ -19,5 +19,6 @@ public enum AuditEventType
     DocumentDownloaded = 15,
     DocumentDeleted = 16,
     IntegrityFailure = 17,
-    PermissionDenied = 18
+    PermissionDenied = 18,
+    SecurityAlert = 19
 }

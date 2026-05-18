@@ -1,0 +1,61 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: safevault_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=safevault_ci;Username=postgres;Password=postgres
+      Jwt__Issuer: SafeVault
+      Jwt__Audience: SafeVault.Api
+      Jwt__SigningKey: CI_SIGNING_KEY_CHANGE_ME_32_CHARS_123456
+      ASPNETCORE_ENVIRONMENT: Development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release --collect "XPlat Code Coverage"
+
+      - name: SCA (dotnet list package --vulnerable)
+        id: sca
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts
+          dotnet list package --vulnerable --include-transitive > artifacts/sca-report.txt
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-and-sca-reports
+          path: artifacts

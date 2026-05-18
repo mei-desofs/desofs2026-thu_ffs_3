@@ -40,7 +40,7 @@ public class DocumentServiceCoverageTests
 
         var sut = new DocumentService(vaultRepository.Object, documentRepository.Object, storage.Object, hashService.Object, Mock.Of<IAuditWriter>());
 
-        using var stream = new MemoryStream([10, 20, 30]);
+        using var stream = CreatePdfStream();
         var request = new UploadDocumentRequest(vault.Id, "doc.pdf", "application/pdf", stream.Length, DocumentClassification.Internal, stream);
 
         var result = await sut.UploadAsync(actorId, request);
@@ -48,6 +48,9 @@ public class DocumentServiceCoverageTests
         Assert.Equal("doc.pdf", result.OriginalFileName);
         documentRepository.Verify(x => x.AddAsync(It.IsAny<Document>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    private static MemoryStream CreatePdfStream()
+        => new(System.Text.Encoding.ASCII.GetBytes("%PDF-1.7\n%EOF"));
 
     [Fact]
     public async Task Download_ShouldThrow_WhenIntegrityCheckFails()

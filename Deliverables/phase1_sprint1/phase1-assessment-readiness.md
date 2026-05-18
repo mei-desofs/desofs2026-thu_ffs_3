@@ -108,23 +108,23 @@ Este documento consolida a evidencia necessaria para a avaliacao de M1 (Phase 1)
 
 ### 8.1 Trust Boundaries
 
-![Trust Boundaries do SafeVault](Diagrams/phase1-assessment-readiness-diagram-1.png)
+![Trust Boundaries do SafeVault](../Diagrams/phase1-assessment-readiness-diagram-1.png)
 
 ### 8.2 Arquitectura de Seguranca por Componentes
 
-![Arquitectura de Seguranca por Componentes](Diagrams/phase1-assessment-readiness-diagram-2.png)
+![Arquitectura de Seguranca por Componentes](../Diagrams/phase1-assessment-readiness-diagram-2.png)
 
 ### 8.3 Sequencia de Autenticacao e Emissao de Token
 
-![Sequencia de Autenticacao e Emissao de Token](Diagrams/phase1-assessment-readiness-diagram-3.png)
+![Sequencia de Autenticacao e Emissao de Token](../Diagrams/phase1-assessment-readiness-diagram-3.png)
 
 ### 8.4 Sequencia de Download com Validacao de Integridade
 
-![Sequencia de Download com Validacao de Integridade SHA-256](Diagrams/phase1-assessment-readiness-diagram-4.png)
+![Sequencia de Download com Validacao de Integridade SHA-256](../Diagrams/phase1-assessment-readiness-diagram-4.png)
 
 ### 8.5 Fluxo de Dados Sensiveis
 
-![Fluxo de Dados Sensiveis no SafeVault](Diagrams/phase1-assessment-readiness-diagram-5.png)
+![Fluxo de Dados Sensiveis no SafeVault](../Diagrams/phase1-assessment-readiness-diagram-5.png)
 
 ---
 

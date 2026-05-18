@@ -20,7 +20,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
     private static async Task WriteProblemAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = exception switch
+        var statusCode = exception switch
         {
             UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
             KeyNotFoundException => (int)HttpStatusCode.NotFound,
@@ -28,10 +28,21 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             _ => (int)HttpStatusCode.InternalServerError
         };
 
+        context.Response.StatusCode = statusCode;
+
+        var message = statusCode switch
+        {
+            StatusCodes.Status401Unauthorized => "Unauthorized.",
+            StatusCodes.Status404NotFound => "Resource not found.",
+            StatusCodes.Status400BadRequest => "Invalid request.",
+            _ => "Internal server error."
+        };
+
         var payload = new
         {
-            error = exception.Message,
-            statusCode = context.Response.StatusCode
+            error = message,
+            statusCode = context.Response.StatusCode,
+            correlationId = context.TraceIdentifier
         };
 
         await context.Response.WriteAsJsonAsync(payload);

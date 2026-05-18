@@ -23,7 +23,7 @@ public class ControllersCoverageTests
         var expected = new AuthResponse("access", DateTime.UtcNow.AddMinutes(30), "refresh", DateTime.UtcNow.AddDays(7));
         authService.Setup(x => x.LoginAsync(It.IsAny<LoginRequest>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-        var controller = new AuthController(authService.Object)
+        var controller = new AuthController(authService.Object, Mock.Of<ICsrfTokenService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
         };
@@ -33,6 +33,25 @@ public class ControllersCoverageTests
 
         var ok = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(expected, ok.Value);
+    }
+
+    [Fact]
+    public void AuthController_GetCsrfToken_ShouldReturnOk()
+    {
+        var userId = Guid.NewGuid();
+        var csrfService = new Mock<ICsrfTokenService>();
+        csrfService.Setup(x => x.IssueToken(userId)).Returns("csrf-token");
+
+        var controller = new AuthController(Mock.Of<IAuthService>(), csrfService.Object)
+        {
+            ControllerContext = CreateControllerContext(userId)
+        };
+
+        var response = controller.GetCsrfToken();
+
+        var ok = Assert.IsType<OkObjectResult>(response.Result);
+        var payload = Assert.IsType<CsrfTokenResponse>(ok.Value);
+        Assert.Equal("csrf-token", payload.Token);
     }
 
     [Fact]

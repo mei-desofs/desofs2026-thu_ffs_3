@@ -34,7 +34,7 @@
 
 O **SafeVault** e uma API REST desenvolvida em ASP.NET Core com Entity Framework Core e base de dados PostgreSQL, destinada a gestao segura de documentos sensiveis em contexto organizacional. O sistema permite armazenar, organizar, partilhar e auditar documentos como contratos, ficheiros de RH e relatorios financeiros.
 
-O sistema foi concebido tendo como premissa central o principio da seguranca por desenho. Todas as decisoes arquitecturais descritas neste documento foram tomadas com o objectivo de minimizar a superficie de ataque, garantir a confidencialidade dos dados e assegurar a rastreabilidade de todas as operacoes realizadas.
+O sistema foi concebido tendo como premissa central o principio da seguranca por desenho. Todas as decisoes architecturais descritas neste documento foram tomadas com o objectivo de minimizar a superficie de ataque, garantir a confidencialidade dos dados e assegurar a rastreabilidade de todas as operacoes realizadas.
 
 ### Actores do Sistema
 
@@ -179,7 +179,7 @@ O SafeVault segue uma arquitectura em camadas inspirada em Clean Architecture e 
 
 A figura seguinte ilustra a arquitectura de camadas do sistema, bem como as trust boundaries entre os diferentes componentes e entidades externas.
 
-![Arquitectura em Camadas do SafeVault](Diagrams/phase1_deliverable-diagram-1.png)
+![Arquitectura em Camadas do SafeVault](../Diagrams/phase1_deliverable-diagram-1.png)
 
 As trust boundaries identificadas sao:
 
@@ -189,7 +189,7 @@ As trust boundaries identificadas sao:
 
 A figura seguinte detalha os componentes de seguranca activos em cada camada, incluindo o pipeline de autenticacao JWT/RBAC, os middlewares de seguranca, o servico de hash SHA-256 e o registo de auditoria.
 
-![Arquitectura de Seguranca por Componentes](Diagrams/phase1-assessment-readiness-diagram-2.png)
+![Arquitectura de Seguranca por Componentes](../Diagrams/phase1-assessment-readiness-diagram-2.png)
 
 ### 3.2 Modelo de Dominio DDD
 
@@ -229,7 +229,7 @@ O modelo de dominio e composto por quatro agregados principais, cada um com as s
 
 O DFD de nivel 0 apresenta o sistema como uma unidade unica e mostra as suas interaccoes com as entidades externas. O objectivo e evidenciar quais os dados que entram e saem do sistema e atraves de que trust boundaries transitam.
 
-![DFD Nivel 0 - Diagrama de Contexto](Diagrams/phase1_deliverable-diagram-2.png)
+![DFD Nivel 0 - Diagrama de Contexto](../Diagrams/phase1_deliverable-diagram-2.png)
 
 A tabela seguinte descreve os fluxos de dados identificados no diagrama de contexto:
 
@@ -249,7 +249,7 @@ A tabela seguinte descreve os fluxos de dados identificados no diagrama de conte
 
 O DFD de nivel 1 decompoe o sistema em cinco processos principais, mostrando como os fluxos de dados circulam entre eles, as entidades externas e os data stores.
 
-![DFD Nivel 1 - Processos Principais](Diagrams/phase1_deliverable-diagram-3.png)
+![DFD Nivel 1 - Processos Principais](../Diagrams/phase1_deliverable-diagram-3.png)
 
 Os cinco processos identificados sao:
 
@@ -263,7 +263,7 @@ Os cinco processos identificados sao:
 
 Dado que o processo P4 e o mais critico do ponto de vista da seguranca, e aqui detalhado ao nivel 2. O diagrama mostra os sub-processos internos de P4 e os fluxos de dados entre eles.
 
-![DFD Nivel 2 - Gestao de Documentos](Diagrams/phase1_deliverable-diagram-4.png)
+![DFD Nivel 2 - Gestao de Documentos](../Diagrams/phase1_deliverable-diagram-4.png)
 
 O fluxo de upload percorre os sub-processos P4.1 (validacao de MIME, extensao e tamanho), P4.2 (geracao de `StoredFileName` como GUID, calculo de SHA-256 e escrita no filesystem) e P4.3 (persistencia de metadados e hash na base de dados).
 
@@ -273,7 +273,7 @@ O fluxo de eliminacao passa igualmente por P4.4 e termina em P4.6, que executa o
 
 A figura seguinte apresenta uma perspectiva transversal do fluxo de dados sensiveis no sistema, evidenciando as fronteiras entre a entrada de dados, o processamento interno e a saida com exposicao minima de informacao.
 
-![Fluxo de Dados Sensiveis no SafeVault](Diagrams/phase1-assessment-readiness-diagram-5.png)
+![Fluxo de Dados Sensiveis no SafeVault](../Diagrams/phase1-assessment-readiness-diagram-5.png)
 
 ---
 
@@ -296,7 +296,7 @@ A metodologia STRIDE foi aplicada sistematicamente a cada elemento dos DFDs apre
 
 A figura seguinte ilustra o fluxo normal de autenticacao, que serve de referencia para a analise das ameacas T-01 a T-06.
 
-![Sequencia de Autenticacao e Emissao de Token](Diagrams/phase1-assessment-readiness-diagram-3.png)
+![Sequencia de Autenticacao e Emissao de Token](../Diagrams/phase1-assessment-readiness-diagram-3.png)
 
 ### 5.3 Ameacas ao Processo P4 - Gestao de Documentos
 
@@ -453,7 +453,7 @@ No momento do upload, o hash SHA-256 e calculado sobre o stream do ficheiro ante
 
 A figura seguinte ilustra a sequencia de download com os dois caminhos possiveis: hash valido e hash invalido.
 
-![Sequencia de Download com Validacao de Integridade SHA-256](Diagrams/phase1-assessment-readiness-diagram-4.png)
+![Sequencia de Download com Validacao de Integridade SHA-256](../Diagrams/phase1-assessment-readiness-diagram-4.png)
 
 **M-07 - Audit logging completo** (endereça T-03, T-22)
 

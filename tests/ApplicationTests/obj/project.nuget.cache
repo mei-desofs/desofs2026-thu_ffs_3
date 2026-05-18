@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wmpZ0/MTcxY=",
+  "dgSpecHash": "w0W5qM0iFDQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\goncalo.barbosa\\Downloads\\DESOFT\\tests\\ApplicationTests\\SafeVault.ApplicationTests.csproj",
+  "projectFilePath": "C:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\tests\\ApplicationTests\\SafeVault.ApplicationTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\goncalo.barbosa\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\goncalo.barbosa\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",
