@@ -5,7 +5,7 @@ using SafeVault.InterfaceAdapters;
 
 namespace SafeVault.InterfaceAdapters.Middleware;
 
-public class IastMonitoringMiddleware(RequestDelegate next, ILogger<IastMonitoringMiddleware> logger, IAuditWriter auditWriter, IConfiguration configuration)
+public class IastMonitoringMiddleware(RequestDelegate next, ILogger<IastMonitoringMiddleware> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration)
 {
     private static readonly Regex[] SuspiciousPatterns =
     [
@@ -16,6 +16,7 @@ public class IastMonitoringMiddleware(RequestDelegate next, ILogger<IastMonitori
     ];
 
     private readonly bool _enabled = configuration.GetValue("Iast:Enabled", false);
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
     public async Task Invoke(HttpContext context)
     {
@@ -30,6 +31,8 @@ public class IastMonitoringMiddleware(RequestDelegate next, ILogger<IastMonitori
                         ? context.User.GetRequiredUserId()
                         : (Guid?)null;
 
+                    using var scope = _scopeFactory.CreateScope();
+                    var auditWriter = scope.ServiceProvider.GetRequiredService<IAuditWriter>();
                     await auditWriter.WriteAsync(
                         AuditEventType.SecurityAlert,
                         userId,
