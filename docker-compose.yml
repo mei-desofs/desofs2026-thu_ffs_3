@@ -30,7 +30,7 @@ services:
       Jwt__Issuer: SafeVault
       Jwt__Audience: SafeVault.Api
       Jwt__SigningKey: ${JWT_SIGNING_KEY}
-      Jwt__AccessTokenMinutes: 60
+      Jwt__AccessTokenMinutes: 120
       Storage__BasePath: /app/storage
       Iast__Enabled: "true"
       ASPNETCORE_ENVIRONMENT: Docker

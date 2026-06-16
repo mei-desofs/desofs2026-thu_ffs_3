@@ -1,0 +1,49 @@
+---
+env:
+  contexts:
+    - name: safevault
+      urls:
+        - http://host.docker.internal:8080
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: replacer
+    parameters:
+      deleteAllRules: false
+    rules:
+      - description: BearerJWT
+        matchType: REQ_HEADER
+        matchString: Authorization
+        matchRegex: false
+        replacementString: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMDAwMTI1OS0xZjFkLTRhNWQtYjUxMC01ODczMGI0Njg2MDMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImYwMDAxMjU5LTFmMWQtNGE1ZC1iNTEwLTU4NzMwYjQ2ODYwMyIsImVtYWlsIjoiemFwdGVzdEBzYWZldmF1bHQuaW8iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ6YXB0ZXN0QHNhZmV2YXVsdC5pbyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzgxNjEyNTUxLCJpc3MiOiJTYWZlVmF1bHQiLCJhdWQiOiJTYWZlVmF1bHQuQXBpIn0.PevRLmtIxKIBADZOfe6otx7s9Juna3GRw6zsUiBx4-I"
+        initiators: []
+
+  - type: openapi
+    parameters:
+      apiFile: /zap/wrk/swagger.json
+      targetUrl: http://host.docker.internal:8080
+      context: safevault
+
+  - type: activeScan
+    parameters:
+      context: safevault
+      policy: Default Policy
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 0
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-full-auth-report.html
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk
+      reportFile: zap-full-auth-report.json

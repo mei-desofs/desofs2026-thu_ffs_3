@@ -32,7 +32,8 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "f0001259-1f1d-4a5d-b510-58730b468603"
             }
           }
         ],
@@ -254,7 +255,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "c0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -365,7 +367,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "d0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -438,7 +441,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "d0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -461,7 +465,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "d0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -568,7 +573,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "f0001259-1f1d-4a5d-b510-58730b468603"
             }
           }
         ],
@@ -606,7 +612,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "f0001259-1f1d-4a5d-b510-58730b468603"
             }
           }
         ],
@@ -663,7 +670,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "f0001259-1f1d-4a5d-b510-58730b468603"
             }
           }
         ],
@@ -770,7 +778,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "c0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -829,7 +838,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "c0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -852,7 +862,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "c0001259-1f1d-4a5d-b510-000000000001"
             }
           }
         ],
@@ -894,7 +905,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "c0001259-1f1d-4a5d-b510-000000000001"
             }
           },
           {
@@ -903,7 +915,8 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "example": "f0001259-1f1d-4a5d-b510-58730b468603"
             }
           }
         ],
