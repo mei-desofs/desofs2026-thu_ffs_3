@@ -1,0 +1,65 @@
+@startuml
+!pragma layout smetana
+' SafeVault — Diagrama de Componentes (estilo C4), à imagem do exemplo "Sistema AIT".
+title SafeVault — Diagrama de Componentes (C4)
+
+skinparam shadowing false
+skinparam componentStyle uml2
+skinparam component {
+  BackgroundColor #87CEFA
+  BorderColor Black
+  FontColor Black
+}
+skinparam interface {
+  BackgroundColor #87CEFA
+  BorderColor Black
+  FontColor Black
+}
+skinparam database {
+  BackgroundColor #87CEFA
+  BorderColor Black
+  FontColor Black
+}
+
+' ── Interfaces de utilizador (atores, por papel RBAC) ───────────────────────
+() "UI Admin" as uiAdmin
+() "UI Manager" as uiManager
+() "UI Viewer" as uiViewer
+
+' ── Sistema (C4) com os seus contentores ────────────────────────────────────
+component "SafeVault\n<<component>>\n<<system (C4)>>" as sys {
+  component "Autenticação / Sessão\n<<container (C4)>>" as auth
+  component "Gestão de Vaults\n<<container (C4)>>" as vaults
+  component "Gestão de Documentos\n<<container (C4)>>" as docs
+  component "Auditoria / Logging\n<<container (C4)>>" as audit
+
+  interface "Auth API" as authApi
+  interface "Vaults API" as vaultsApi
+  interface "Documents API" as docsApi
+  interface "Audit API" as auditApi
+}
+
+' ── Sistemas externos ───────────────────────────────────────────────────────
+interface "filesystem API" as fsApi
+database "PostgreSQL" as db
+
+' ── UI → APIs providas pelos contentores ────────────────────────────────────
+uiAdmin --> authApi
+uiManager --> vaultsApi
+uiManager --> docsApi
+uiViewer --> docsApi
+uiAdmin --> auditApi
+
+authApi -- auth
+vaultsApi -- vaults
+docsApi -- docs
+auditApi -- audit
+
+' ── Contentores → recursos externos ─────────────────────────────────────────
+vaults --> fsApi : cria directorias
+docs --> fsApi : lê/escreve ficheiros
+auth --> db
+vaults --> db
+docs --> db
+audit --> db
+@enduml

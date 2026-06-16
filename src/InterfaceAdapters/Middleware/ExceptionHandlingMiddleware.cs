@@ -26,6 +26,9 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
             KeyNotFoundException => (int)HttpStatusCode.NotFound,
             InvalidOperationException => (int)HttpStatusCode.BadRequest,
+            // Validação de domínio (PasswordPolicy, Email, VaultName, ...) lança ArgumentException.
+            // Mapeada para 400 para não expor 500 + detalhes de erro a inputs inválidos.
+            ArgumentException => (int)HttpStatusCode.BadRequest,
             JsonException => (int)HttpStatusCode.BadRequest,
             _ => (int)HttpStatusCode.InternalServerError
         };

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aef+rAzH/fg=",
+  "dgSpecHash": "IQGqDCJguz8=",
   "success": true,
-  "projectFilePath": "c:\\Users\\goncalo.barbosa\\OneDrive - Unavets Services S.L\\Documents\\ISEP\\DESOFT\\DESOFT\\desofs2026-thu_ffs_3\\src\\Domain\\SafeVault.Domain.csproj",
+  "projectFilePath": "/app/src/Domain/SafeVault.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

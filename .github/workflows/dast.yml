@@ -1,19 +1,28 @@
 name: dast
 
+# DAST (Dynamic Application Security Testing) com OWASP ZAP.
+#
+# Ao contrário de um "baseline scan" (apenas spider + passive), que numa API REST
+# JSON pura quase não encontra superfície de ataque, este workflow corre o
+# *ZAP API scan* a partir da especificação OpenAPI (`.zap/swagger.json`),
+# autenticado com um JWT obtido dinamicamente em runtime. Assim o scanner
+# exercita todos os endpoints reais (autenticados) e os scanners activos de
+# SQLi / XSS / Path Traversal definidos em `.zap/rules.tsv` têm efeito.
+
 on:
-  # Manual trigger against any external URL (e.g. staging)
+  # Modo manual: correr contra um alvo externo (ex.: staging) usando a mesma spec.
   workflow_dispatch:
     inputs:
       targetUrl:
-        description: "Target URL for DAST (e.g., https://staging.example.com)"
+        description: "URL externo a analisar (ex.: https://staging.example.com)"
         required: true
         type: string
 
-  # Automated scan: spin up the app via Docker Compose and scan it
+  # Modo automático: chamado pelo pipeline de CI; sobe o stack via docker compose.
   workflow_call:
     inputs:
       targetUrl:
-        description: "Internal target URL (set automatically by caller)"
+        description: "URL interno (definido automaticamente pelo caller)"
         required: false
         type: string
         default: "http://localhost:8080"
@@ -21,38 +30,15 @@ on:
 permissions:
   contents: read
   security-events: write
-  issues: write
+
+env:
+  ZAP_IMAGE: ghcr.io/zaproxy/zaproxy:stable
+  COMPOSE_PROJECT: safevault
 
 jobs:
-  # ── Option A: scan an already-running external target ─────────────────────
-  zap-external:
-    name: "DAST · ZAP Baseline (external)"
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: ${{ inputs.targetUrl }}
-          rules_file_name: ".zap/rules.tsv"
-          cmd_options: "-a -j"
-          issue_title: "ZAP DAST Baseline Report"
-          fail_action: false
-
-      - name: Upload ZAP report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report-external
-          path: |
-            report_html.html
-            report_json.json
-
-  # ── Option B: spin up full stack locally and scan ─────────────────────────
-  zap-docker:
-    name: "DAST · ZAP Baseline (docker)"
+  # ── Modo automático: stack completo (API + PostgreSQL) + scan autenticado ──────
+  zap-api:
+    name: "DAST · ZAP API Scan (autenticado)"
     if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
@@ -64,37 +50,106 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and start stack
+      - name: Build e arranque do stack
         run: |
-          docker compose up -d --build
-          # Wait until API is healthy (max 60s)
-          for i in $(seq 1 12); do
-            if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
-              echo "API is up"
+          docker compose -p "$COMPOSE_PROJECT" up -d --build
+          echo "À espera que a API fique saudável..."
+          for i in $(seq 1 24); do
+            if curl -sf http://localhost:8080/health > /dev/null; then
+              echo "API a responder."
               break
             fi
-            echo "Waiting for API... ($i)"
+            echo "  ...ainda à espera ($i)"
             sleep 5
           done
+          if ! curl -sf http://localhost:8080/health > /dev/null; then
+            echo "A API não arrancou a tempo."
+            docker compose -p "$COMPOSE_PROJECT" logs api
+            exit 1
+          fi
 
-      - name: OWASP ZAP Baseline Scan (docker stack)
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: "http://localhost:8080"
-          rules_file_name: ".zap/rules.tsv"
-          cmd_options: "-a -j"
-          issue_title: "ZAP DAST Baseline Report"
-          fail_action: false
+      - name: Obter JWT em runtime (regista um utilizador Admin de teste)
+        id: auth
+        run: |
+          EMAIL="zap+$(date +%s)@safevault.io"
+          # role=1 → Admin (ver SafeVault.Domain.Enums.UserRole)
+          RESP=$(curl -sf -X POST http://localhost:8080/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$EMAIL\",\"password\":\"ZapScan!2026Aa\",\"role\":1}")
+          TOKEN=$(echo "$RESP" | jq -r '.accessToken')
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Falha ao obter token. Resposta: $RESP"
+            exit 1
+          fi
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
-      - name: Upload ZAP report
+      - name: Preencher a spec OpenAPI com IDs de exemplo
+        run: python3 .zap/patch_swagger.py || true
+
+      - name: Permitir escrita de relatórios pelo contentor ZAP
+        run: sudo chmod -R 0777 .zap
+
+      - name: OWASP ZAP API Scan (autenticado)
+        run: |
+          NETWORK="${COMPOSE_PROJECT}_backend"
+          docker run --rm \
+            --network "$NETWORK" \
+            -v "${{ github.workspace }}/.zap:/zap/wrk/:rw" \
+            "$ZAP_IMAGE" \
+            zap-api-scan.py \
+              -t /zap/wrk/swagger.json -f openapi \
+              -O http://api:8080 \
+              -c /zap/wrk/rules.tsv \
+              -r zap-api-report.html \
+              -J zap-api-report.json \
+              -z "replacer.full_list(0).description=auth replacer.full_list(0).enabled=true replacer.full_list(0).matchtype=REQ_HEADER replacer.full_list(0).matchstr=Authorization replacer.full_list(0).regex=false replacer.full_list(0).replacement=Bearer ${{ steps.auth.outputs.token }}" \
+              -I
+        # Códigos de saída do zap-api-scan.py: 0=PASS, 1=alerta FAIL, 2=WARN (suprimido por -I), 3=erro.
+        # Com -I, o job só falha em regras FAIL (SQLi/XSS/Path Traversal em rules.tsv).
+
+      - name: Upload do relatório ZAP
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: zap-report-docker
+          name: zap-api-report
           path: |
-            report_html.html
-            report_json.json
+            .zap/zap-api-report.html
+            .zap/zap-api-report.json
 
-      - name: Tear down stack
+      - name: Desmontar o stack
         if: always()
-        run: docker compose down -v
+        run: docker compose -p "$COMPOSE_PROJECT" down -v
+
+  # ── Modo manual: alvo externo já em execução (usa a mesma spec OpenAPI) ─────────
+  zap-external:
+    name: "DAST · ZAP API Scan (externo)"
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Permitir escrita de relatórios pelo contentor ZAP
+        run: sudo chmod -R 0777 .zap
+
+      - name: OWASP ZAP API Scan (alvo externo)
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/.zap:/zap/wrk/:rw" \
+            "$ZAP_IMAGE" \
+            zap-api-scan.py \
+              -t /zap/wrk/swagger.json -f openapi \
+              -O "${{ inputs.targetUrl }}" \
+              -c /zap/wrk/rules.tsv \
+              -r zap-api-report.html \
+              -J zap-api-report.json \
+              -I
+
+      - name: Upload do relatório ZAP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-api-report-external
+          path: |
+            .zap/zap-api-report.html
+            .zap/zap-api-report.json

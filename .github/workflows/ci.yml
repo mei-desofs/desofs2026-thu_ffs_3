@@ -159,3 +159,14 @@ jobs:
           tags: safevault/api:ci-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────────────────────────────────────
+  # STAGE 5 — DAST (authenticated OWASP ZAP API scan against the full stack)
+  # Só corre em push para main (é pesado: sobe API + PostgreSQL + ZAP).
+  # Em PRs mantém-se rápido; o DAST pode na mesma ser corrido manualmente.
+  # ──────────────────────────────────────────────────────────────────────────────
+  dast:
+    name: "Stage 5 · DAST"
+    needs: docker-build
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/dast.yml

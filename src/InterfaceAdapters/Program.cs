@@ -1,6 +1,7 @@
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -90,6 +91,14 @@ builder.Services
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Aplica migrations pendentes no arranque para garantir que o schema existe.
+// (O health check só valida a ligação à BD, não a existência das tabelas.)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SafeVault.Infrastructure.SafeVaultDbContext>();
+    db.Database.Migrate();
+}
 
 // Security headers must be registered before UseSwagger so they apply to all responses,
 // including /swagger/v1/swagger.json which short-circuits the pipeline.

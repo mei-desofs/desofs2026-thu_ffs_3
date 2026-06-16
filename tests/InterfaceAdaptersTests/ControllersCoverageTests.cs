@@ -138,7 +138,13 @@ public class ControllersCoverageTests
             ContentType = "application/pdf"
         };
 
-        var response = await controller.Upload(vaultId, DocumentClassification.Internal, formFile, CancellationToken.None);
+        var form = new UploadDocumentForm
+        {
+            VaultId = vaultId,
+            Classification = DocumentClassification.Internal,
+            File = formFile
+        };
+        var response = await controller.Upload(form, CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(documentDto, ok.Value);

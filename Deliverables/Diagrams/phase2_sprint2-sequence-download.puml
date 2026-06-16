@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+' SafeVault — Sequência de download de documento (operação de SO sobre o filesystem),
+' à imagem do exemplo "Sistema AIT".
+title SafeVault — Sequência: Download de Documento
+
+skinparam shadowing false
+skinparam sequence {
+  ParticipantBackgroundColor #87CEFA
+  ParticipantBorderColor Black
+  ParticipantFontColor Black
+  ActorBackgroundColor #87CEFA
+  ActorBorderColor Black
+  LifeLineBorderColor Black
+  ArrowColor Black
+}
+
+actor "Manager" as user
+participant "SafeVault\n<<system (C4)>>" as sys
+participant "filesystem\n<<system>>" as fs
+
+user -> sys : 1: download documento doc1
+activate sys
+sys -> fs : 1.1: openfile(path)
+activate fs
+fs --> sys : ficheiro
+deactivate fs
+sys -> fs : 1.2: readObject(...)
+activate fs
+fs --> sys : bytes
+deactivate fs
+sys -> sys : 1.3: verifica integridade (SHA-256)
+sys --> user : 1.4: documento entregue
+deactivate sys
+@enduml

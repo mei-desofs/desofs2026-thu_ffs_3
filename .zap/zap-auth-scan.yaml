@@ -14,11 +14,16 @@ jobs:
     parameters:
       deleteAllRules: false
     rules:
+      # Token injectado em runtime via variável de ambiente ZAP_AUTH_TOKEN.
+      # Obter um JWT fresco antes de correr (evita tokens hardcoded/expirados):
+      #   export ZAP_AUTH_TOKEN="$(curl -s -X POST http://localhost:8080/api/auth/register \
+      #     -H 'Content-Type: application/json' \
+      #     -d '{"email":"zap@safevault.io","password":"ZapScan!2026Aa","role":1}' | jq -r .accessToken)"
       - description: BearerJWT
         matchType: REQ_HEADER
         matchString: Authorization
         matchRegex: false
-        replacementString: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMDAwMTI1OS0xZjFkLTRhNWQtYjUxMC01ODczMGI0Njg2MDMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImYwMDAxMjU5LTFmMWQtNGE1ZC1iNTEwLTU4NzMwYjQ2ODYwMyIsImVtYWlsIjoiemFwdGVzdEBzYWZldmF1bHQuaW8iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ6YXB0ZXN0QHNhZmV2YXVsdC5pbyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzgxNjEyNTUxLCJpc3MiOiJTYWZlVmF1bHQiLCJhdWQiOiJTYWZlVmF1bHQuQXBpIn0.PevRLmtIxKIBADZOfe6otx7s9Juna3GRw6zsUiBx4-I"
+        replacementString: "Bearer ${ZAP_AUTH_TOKEN}"
         initiators: []
 
   - type: openapi

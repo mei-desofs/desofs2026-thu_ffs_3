@@ -7,7 +7,8 @@ services:
       POSTGRES_USER: safevault
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
     ports:
-      - "5432:5432"
+      # Porto exposto no host (configurável para evitar conflitos com outros Postgres locais)
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -24,7 +25,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      # Porto exposto no host (configurável para evitar conflitos locais)
+      - "${API_PORT:-8080}:8080"
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=safevault;Username=safevault;Password=${POSTGRES_PASSWORD:-changeme_in_production}"
       Jwt__Issuer: SafeVault

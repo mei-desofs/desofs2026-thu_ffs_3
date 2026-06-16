@@ -1,0 +1,25 @@
+@startuml
+!pragma layout smetana
+' SafeVault — Vista Lógica (pacotes), à imagem do exemplo "Sistema AIT".
+title SafeVault — Vista Lógica (Pacotes)
+
+skinparam shadowing false
+skinparam package {
+  BackgroundColor #87CEFA
+  BorderColor Black
+  FontColor Black
+}
+
+package "SafeVault" as sys {
+  package "InterfaceAdapters (API)" as api
+  package "Application" as app
+  package "Domain" as domain
+  package "Infrastructure" as infra
+}
+
+' Regra de dependência da Clean Architecture (setas a tracejado, para dentro)
+api ..> app
+app ..> domain
+infra ..> domain
+infra ..> app
+@enduml

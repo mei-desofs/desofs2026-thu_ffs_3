@@ -1,0 +1,145 @@
+@startuml
+!pragma layout smetana
+' SafeVault — Modelo de Domínio (granularidade 1, visão geral)
+' Agregados, entidades de suporte, value objects e enums do núcleo de domínio.
+title SafeVault — Modelo de Domínio (granularidade 1)
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty members
+skinparam class {
+  BackgroundColor #87CEFA
+  BorderColor Black
+  FontColor Black
+  AttributeFontColor Black
+}
+skinparam package {
+  BackgroundColor #E8F6FF
+  BorderColor Black
+}
+
+' ── Agregados (aggregate roots) ─────────────────────────────────────────────
+package "Agregados" {
+  class User <<aggregate root>> {
+    +Id : Guid
+    +Email : string
+    +PasswordHash : string
+    +Role : UserRole
+    +IsActive : bool
+    +FailedLoginAttempts : int
+    +LockoutUntilUtc : DateTime?
+    --
+    +RegisterFailedLoginAttempt()
+    +RegisterSuccessfulLogin()
+    +IsLocked() : bool
+    +AddRefreshToken()
+  }
+
+  class Vault <<aggregate root>> {
+    +Id : Guid
+    +Name : string
+    +OwnerId : Guid
+    +DirectoryPath : string
+    +RetentionDays : int
+    +IsArchived : bool
+    --
+    +GrantAccess()
+    +RevokeAccess()
+    +CanRead(userId) : bool
+    +CanWrite(userId) : bool
+  }
+
+  class Document <<aggregate root>> {
+    +Id : Guid
+    +VaultId : Guid
+    +UploadedBy : Guid
+    +OriginalFileName : string
+    +MimeType : string
+    +FileSize : long
+    +Sha256Hash : string
+    +Classification : DocumentClassification
+    +IsDeleted : bool
+    --
+    +AddVersion()
+    +SoftDelete()
+  }
+
+  class AuditLog <<aggregate root>> {
+    +Id : Guid
+    +EventType : AuditEventType
+    +UserId : Guid?
+    +TargetResourceId : Guid?
+    +Success : bool
+    +TimestampUtc : DateTime
+  }
+}
+
+' ── Entidades de suporte (dentro dos agregados) ─────────────────────────────
+package "Entidades de Suporte" {
+  class RefreshToken {
+    +TokenHash : string
+    +ExpiresAtUtc : DateTime
+    +IsRevoked : bool
+  }
+  class VaultAccess {
+    +UserId : Guid
+    +AccessLevel : AccessLevel
+  }
+  class DocumentVersion {
+    +VersionNumber : int
+    +Sha256Hash : string
+    +UploadedAtUtc : DateTime
+  }
+}
+
+' ── Value Objects ───────────────────────────────────────────────────────────
+package "Value Objects" {
+  class Email <<value object>>
+  class VaultName <<value object>>
+  class Sha256Hash <<value object>>
+  class PasswordPolicy <<value object>>
+}
+
+' ── Enums ───────────────────────────────────────────────────────────────────
+package "Enums" {
+  enum UserRole {
+    Admin
+    Manager
+    Viewer
+  }
+  enum AccessLevel {
+    Read
+    ReadWrite
+  }
+  enum DocumentClassification {
+    Public
+    Internal
+    Confidential
+    Restricted
+  }
+  enum AuditEventType {
+    Login
+    Upload
+    Download
+    ...
+  }
+}
+
+' ── Relações ────────────────────────────────────────────────────────────────
+User "1" *-- "0..*" RefreshToken : possui >
+Vault "1" *-- "0..*" VaultAccess : controla acesso >
+Document "1" *-- "1..*" DocumentVersion : versiona >
+
+User "1" -- "0..*" Vault : é dono de >
+Vault "1" -- "0..*" Document : contém >
+VaultAccess "*" ..> User : concedido a >
+
+User ..> UserRole
+User ..> Email
+Vault ..> VaultName
+Document ..> Sha256Hash
+Document ..> DocumentClassification
+VaultAccess ..> AccessLevel
+AuditLog ..> AuditEventType
+User ..> PasswordPolicy : valida password
+@enduml

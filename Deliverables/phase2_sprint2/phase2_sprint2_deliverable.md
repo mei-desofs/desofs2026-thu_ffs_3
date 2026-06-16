@@ -1,9 +1,9 @@
-# SafeVault — Phase 2 Sprint 2 Deliverable
+# SafeVault — Phase 2 · Sprint 2 — Deliverable
 
-**Repositório:** desofs2026_thu_ffs_3  
-**Turma:** thu_ffs  
-**Sprint:** Phase 2 — Sprint 2  
-**Data de Entrega:** 16 de Junho de 2026  
+**Repositório:** desofs2026_thu_ffs_3
+**Turma:** thu_ffs (Prof. FFS) — Equipa 3
+**Sprint:** Phase 2 — Sprint 2 (final)
+**Data de entrega:** 16 de Junho de 2026
 
 | Nome | Número |
 |------|--------|
@@ -12,349 +12,327 @@
 | Miguel Amorim | 1250540 |
 | Diogo Maria | 1201832 |
 
+> **Como ler este documento.** Está organizado pela rubrica oficial do Sprint 2
+> (secção 6.3 do enunciado): Organização (5%), Desenvolvimento (35%), Build & Test
+> (35%), Produção (5%), Operação (5%) e ASVS (15%). A
+> [Secção 1](#1-resolução-das-notas-de-avaliação-checklist) mapeia diretamente as
+> notas de avaliação recebidas para a respetiva resolução e evidência. Todas as
+> evidências de execução (testes, DAST) foram **re-verificadas em 16/06/2026** e
+> estão no [Apêndice A](#apêndice-a--evidência-de-execução-16062026).
+
 ---
 
 ## Índice
 
-1. [Objectivo da Sprint](#1-objectivo-da-sprint)
-2. [Desenvolvimento (35%)](#2-desenvolvimento-35)
-3. [Build e Testes (35%)](#3-build-e-testes-35)
-4. [Pipeline Automation](#4-pipeline-automation)
-5. [Produção e Operações (5% + 5%)](#5-produção-e-operações)
-6. [ASVS (15%)](#6-asvs)
-7. [Rastreabilidade — Ameaças Phase 1 → Sprint 2](#7-rastreabilidade--ameaças-phase-1--sprint-2)
+1. [Resolução das notas de avaliação (checklist)](#1-resolução-das-notas-de-avaliação-checklist)
+2. [Organização e Linguagem (5%)](#2-organização-e-linguagem-5)
+3. [Desenvolvimento (35%)](#3-desenvolvimento-35)
+4. [Build e Testes (35%)](#4-build-e-testes-35)
+5. [Produção (5%)](#5-produção-5)
+6. [Operação (5%)](#6-operação-5)
+7. [ASVS (15%)](#7-asvs-15)
+8. [Rastreabilidade — Ameaças Phase 1 → Sprint 2](#8-rastreabilidade--ameaças-phase-1--sprint-2)
+9. [Apêndice A — Evidência de execução (16/06/2026)](#apêndice-a--evidência-de-execução-16062026)
 
 ---
 
-## 1. Objectivo da Sprint
+## 1. Resolução das notas de avaliação (checklist)
 
-Consolidar e demonstrar a segurança do sistema SafeVault com:
+Cada item de feedback recebido é mapeado abaixo para a resolução concreta e a evidência no repositório.
 
-- Infraestrutura Docker completa (desenvolvimento e produção).
-- Pipeline CI/CD multi-estágio com SAST, SCA, testes e geração automática de releases.
-- Testes de regressão de segurança que provam que as ameaças identificadas em Phase 1 foram mitigadas.
-- Análise DAST automatizada via OWASP ZAP integrada no pipeline.
-- Controlo de pull requests com aprovação obrigatória de membro da equipa.
-- Evidência do algoritmo de hashing de passwords (bcrypt workfactor 12) como escolha justificada.
-- Documentação actualizada com rastreabilidade completa entre ameaças, mitigações e testes.
+| # | Nota de avaliação | Estado | Resolução e evidência |
+|---|-------------------|--------|------------------------|
+| 1 | Ver as ameaças, resolvê-las e mostrar **como** | Resolvido | Matriz de rastreabilidade com 22 ameaças STRIDE, mitigação por ameaça e teste associado — [Secção 8](#8-rastreabilidade--ameaças-phase-1--sprint-2) e [`phase2_sprint2_traceability_matrix.md`](phase2_sprint2_traceability_matrix.md) |
+| 2 | Usar o **ZAP** para ver vulnerabilidades | Resolvido | DAST autenticado (ZAP API scan via OpenAPI). Resultado: **0 FAIL · 0 WARN · 119 PASS** — [Secção 4.3](#43-dast--owasp-zap) e [Apêndice A.2](#a2-dast--owasp-zap-api-scan-autenticado) |
+| 3 | Ameaças da 1.ª entrega → ver se **desapareceram** + provar em código | Resolvido | Testes de regressão de segurança anotados por ID de ameaça; ameaça **T-16 deixou de existir** (eliminada por design) — [Secção 8](#8-rastreabilidade--ameaças-phase-1--sprint-2) |
+| 4 | Melhorar **GitHub Actions** em stages diferentes | Resolvido | `ci.yml` com **5 stages** (Build → Test → SCA → Docker Build → DAST) — [Secção 4.1](#41-pipeline-ci-multi-estágio) |
+| 5 | **Aprovação manual** obrigatória para merge em `main` | Resolvido | `CODEOWNERS` + branch protection (≥1 aprovação, Code Owners) + template de PR — [Secção 4.4](#44-controlo-de-pull-requests) |
+| 6 | Atualizar **diagramas** (componentes, vista lógica 1/2, domínio granularidade 1) | Resolvido | 4 novos diagramas PlantUML + PNG — [Secção 3.3](#33-diagramas-de-arquitectura) |
+| 7 | **Comprovar a segurança com testes** | Resolvido | **106 testes**, 0 falhas; testes de regressão de segurança dedicados — [Secção 4.2](#42-testes) e [Apêndice A.1](#a1-build-e-testes-unitários) |
+| 8 | Mostrar **qual o algoritmo melhor** (hashing) | Resolvido | Justificação BCrypt (work factor 12) vs MD5/SHA/Argon2 — [Secção 3.2.1](#321-justificação-do-algoritmo-de-hashing-de-passwords) |
+| 9 | **Releases** automáticas via Actions | Resolvido | `release.yml`: tag `v*.*.*` → testes → binários multi-plataforma → Docker → GitHub Release — [Secção 4.5](#45-pipeline-de-release-automático) |
+| 10 | **Auto run no Docker** / Docker Hub / guardar nova versão | Resolvido | `docker-compose.yml` + push para GHCR **e** Docker Hub com versionamento semântico — [Secção 5](#5-produção-5) |
+| 11 | **SQL injection** não passa | Resolvido | EF Core parametrizado + IAST runtime; ZAP regra `40018` (SQLi) = **PASS** — [Secção 3.2](#32-segurança--controlos-implementados) |
+| 12 | Passwords **não em string** / protegidas | Resolvido | BCrypt (nunca em plaintext); testes provam hash + salt único — [Secção 3.2.1](#321-justificação-do-algoritmo-de-hashing-de-passwords) |
+| 13 | **Análise de dependências** (SCA) | Resolvido | Stage 3 do pipeline (`dotnet list package --vulnerable`) — [Secção 4.1](#41-pipeline-ci-multi-estágio) |
+| 14 | **Arranjar o ZAP** (estava estranho) | Resolvido | Substituído o *baseline scan* (inútil em API JSON) por **API scan autenticado** na rede correta, com token dinâmico — [Secção 4.3](#43-dast--owasp-zap) |
+
+### 1.1 Bugs encontrados e corrigidos durante a verificação final
+
+Ao executar o sistema de ponta a ponta para esta entrega (em vez de confiar apenas na documentação), foram detetados e **corrigidos** três defeitos reais. Isto demonstra que a verificação foi genuína:
+
+| Defeito | Causa | Correção | Evidência |
+|---------|-------|----------|-----------|
+| API devolvia **500** em todos os endpoints com BD | As migrations EF Core **nunca eram aplicadas** no arranque → `relation "Users" does not exist` | `db.Database.Migrate()` no startup | [`Program.cs`](../../src/InterfaceAdapters/Program.cs) · [Apêndice A.3](#a3-correcção-do-arranque-migrations) |
+| Projeto de testes **não compilava** | `ControllersCoverageTests` chamava `Upload()` com assinatura antiga | Teste atualizado para o `UploadDocumentForm` atual | [`ControllersCoverageTests.cs`](../../tests/InterfaceAdaptersTests/ControllersCoverageTests.cs) |
+| Input inválido devolvia **500 + error disclosure** | `ArgumentException` (de `PasswordPolicy`/`Email`) não mapeada | Mapeada para **400 Bad Request** | [`ExceptionHandlingMiddleware.cs`](../../src/InterfaceAdapters/Middleware/ExceptionHandlingMiddleware.cs) |
+
+A correção do mapeamento de erros eliminou os 3 alertas WARN que o ZAP reportava em `/api/auth/register`, levando o scan a **0 FAIL · 0 WARN**.
 
 ---
 
-## 2. Desenvolvimento (35%)
+## 2. Organização e Linguagem (5%)
 
-### 2.1 Funcionalidade — Complexidade e Boas Práticas
+- Documento principal único (este ficheiro) com ligações para todos os artefactos (código, diagramas, relatórios, checklist ASVS).
+- Estrutura de repositório por camadas (Clean Architecture) e entregáveis por fase/sprint em [`Deliverables/`](../).
+- Documentação em Português, com referências de código clicáveis para cada afirmação.
 
-O backend está completamente implementado seguindo DDD e Clean Architecture:
+---
 
-- **3 agregados completos:** `User`, `Vault`, `Document` + agregado de suporte `AuditLog`.
-- **3 papéis RBAC:** `Admin`, `Manager`, `Viewer` com verificação server-side em todos os endpoints.
-- **Execução de operações no SO:**
-  - Criação de directorias no filesystem ao criar vaults: [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs)
-  - Escrita de ficheiros ao fazer upload: [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs)
-  - Leitura de ficheiros ao fazer download: [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs)
-  - Remoção de ficheiros ao eliminar documentos: [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs)
-  - Geração de logs de auditoria diários: [`appsettings.json`](../../src/InterfaceAdapters/appsettings.json) (Serilog rolling file)
-- **Logging e Auditoria:** Serilog com sink de ficheiro diário rotativo e sink de consola. Todos os eventos de segurança auditados na BD via `AuditWriterService`.
+## 3. Desenvolvimento (35%)
 
-### 2.2 Segurança — Controlos Implementados
+### 3.1 Funcionalidade — complexidade e boas práticas
 
-| Controlo | Localização | Ameaça Mitigada |
+Backend completo em **ASP.NET Core (.NET 9)** com **PostgreSQL**, seguindo **DDD + Clean Architecture**:
+
+- **3 agregados + 1 de suporte:** `User`, `Vault`, `Document` (+ `AuditLog`), satisfazendo o requisito de ≥3 agregados.
+- **3 papéis RBAC:** `Admin`, `Manager`, `Viewer`, com verificação server-side em todos os endpoints.
+- **Operações de SO no backend:** criação de directorias ao criar vaults, escrita/leitura/remoção de ficheiros, logs de auditoria diários — [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs).
+- **Encapsulamento de domínio:** entidades com setters privados, invariantes nos construtores/métodos, value objects (`Email`, `VaultName`, `Sha256Hash`, `PasswordPolicy`).
+- **Logging:** Serilog (consola + ficheiro diário rotativo) e auditoria na BD via `AuditWriterService`.
+
+### 3.2 Segurança — controlos implementados
+
+| Controlo | Localização | Ameaça mitigada |
 |----------|-------------|-----------------|
-| BCrypt com work factor 12 | [`PasswordHasherService.cs`](../../src/Infrastructure/Security/PasswordHasherService.cs) | T-05, T-06, RS-01.5 |
-| JWT HS256 com chave ≥ 32 chars | [`JwtTokenService.cs`](../../src/Infrastructure/Security/JwtTokenService.cs) | T-01, T-02 |
-| RBAC server-side por controller | [`DocumentsController.cs`](../../src/InterfaceAdapters/Controllers/DocumentsController.cs) | T-07, T-11, T-14 |
-| Validação de magic bytes (upload) | [`DocumentService.cs`](../../src/Application/Services/DocumentService.cs) | T-08, AC-04 |
-| Path traversal prevention (canonicalização) | [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs) | T-09, AC-03 |
-| Hash SHA-256 em upload + verificação no download | [`DocumentService.cs`](../../src/Application/Services/DocumentService.cs) | T-10, T-21 |
-| Rate limiting 10 req/min por IP no auth | [`Program.cs`](../../src/InterfaceAdapters/Program.cs) | T-05, AC-01 |
-| Lockout de conta após 5 falhas | [`User.cs`](../../src/Domain/EntityModels/User.cs) | T-05, T-06 |
-| Secrets fora do repositório (env vars) | [`appsettings.json`](../../src/InterfaceAdapters/appsettings.json) | T-16 |
-| CSRF token dinâmico (30 min) | [`CsrfTokenService.cs`](../../src/Infrastructure/Security/CsrfTokenService.cs) | Mutations |
+| BCrypt com work factor 12 | [`PasswordHasherService.cs`](../../src/Infrastructure/Security/PasswordHasherService.cs) | T-05, T-06 |
+| JWT HS256, chave ≥ 32 chars, `RequireSignedTokens` | [`JwtTokenService.cs`](../../src/Infrastructure/Security/JwtTokenService.cs) / [`Program.cs`](../../src/InterfaceAdapters/Program.cs) | T-01, T-02 |
+| RBAC server-side + ownership (`CanRead`/`CanWrite`) | [`Vault.cs`](../../src/Domain/EntityModels/Vault.cs) / Controllers | T-07, T-11, T-14 |
+| Validação de magic bytes no upload | [`DocumentService.cs`](../../src/Application/Services/DocumentService.cs) | T-08 |
+| Path traversal prevention (canonicalização) | [`FileStorageService.cs`](../../src/Infrastructure/Storage/FileStorageService.cs) | T-09 |
+| SHA-256 no upload + verificação no download | [`DocumentService.cs`](../../src/Application/Services/DocumentService.cs) | T-10, T-21 |
+| Rate limiting 10 req/min/IP no auth | [`Program.cs`](../../src/InterfaceAdapters/Program.cs) | T-05 |
+| Lockout após 5 falhas (15 min) | [`User.cs`](../../src/Domain/EntityModels/User.cs) | T-05, T-06 |
+| EF Core parametrizado (sem SQL dinâmico) | [`Repositories/`](../../src/Infrastructure/Repositories/) | T-15 (SQLi) |
+| IAST middleware (deteção runtime) | [`IastMonitoringMiddleware.cs`](../../src/InterfaceAdapters/Middleware/IastMonitoringMiddleware.cs) | T-15 |
 | Headers de segurança HTTP | [`SecurityHeadersMiddleware.cs`](../../src/InterfaceAdapters/Middleware/SecurityHeadersMiddleware.cs) | T-20 |
-| Erros sem detalhe interno + correlation ID | [`ExceptionHandlingMiddleware.cs`](../../src/InterfaceAdapters/Middleware/ExceptionHandlingMiddleware.cs) | T-12 |
-| IAST middleware (runtime pattern detection) | [`IastMonitoringMiddleware.cs`](../../src/InterfaceAdapters/Middleware/IastMonitoringMiddleware.cs) | T-15, AC-07 |
-| EF Core com queries parametrizadas | Todos os repositórios em [`Repositories/`](../../src/Infrastructure/Repositories/) | T-15, AC-07 |
-| Validação de tamanho de ficheiro (max 100MB) | [`DocumentService.cs`](../../src/Application/Services/DocumentService.cs) | T-13, T-19 |
+| Erros sem detalhe interno (400/correlation ID) | [`ExceptionHandlingMiddleware.cs`](../../src/InterfaceAdapters/Middleware/ExceptionHandlingMiddleware.cs) | T-12 |
+| Secrets fora do repositório (env vars + validação no startup) | [`Program.cs`](../../src/InterfaceAdapters/Program.cs) / [`.env.example`](../../.env.example) | T-16 |
 
-### 2.3 Justificação do Algoritmo de Password Hashing
+#### 3.2.1 Justificação do algoritmo de hashing de passwords
 
-O sistema utiliza **BCrypt** com work factor 12, implementado em [`PasswordHasherService.cs`](../../src/Infrastructure/Security/PasswordHasherService.cs).
+O sistema usa **BCrypt** com work factor 12 — [`PasswordHasherService.cs`](../../src/Infrastructure/Security/PasswordHasherService.cs).
 
-**Por que BCrypt e não MD5, SHA-1 ou SHA-256 directo?**
+| Algoritmo | Velocidade atacante (GPU) | Salt automático | Custo adaptativo | Adequado a passwords |
+|-----------|---------------------------|-----------------|------------------|----------------------|
+| MD5 | ~10 GB/s | Não | Não | **NÃO** |
+| SHA-256 | ~5 GB/s | Não | Não | **NÃO** |
+| SHA-256 + salt manual | ~4 GB/s | Manual | Não | **NÃO** |
+| **BCrypt (cost=12)** | **~150 H/s** | **Sim** | **Sim** | **SIM** |
+| Argon2id | ~50 H/s | Sim | Sim | SIM (alternativa) |
 
-| Algoritmo | Velocidade | Salt Automático | Adaptive Cost | Adequado para Passwords |
-|-----------|-----------|----------------|---------------|------------------------|
-| MD5 | ~10 GB/s (GPU) | Não | Não | **NÃO** |
-| SHA-256 | ~5 GB/s (GPU) | Não | Não | **NÃO** |
-| SHA-256 + salt manual | ~4 GB/s (GPU) | Manual | Não | **NÃO** |
-| BCrypt (cost=12) | ~150 H/s (GPU) | Sim (built-in) | Sim | **SIM** |
-| Argon2id | ~50 H/s (GPU) | Sim (built-in) | Sim | **SIM** (melhor alternativa) |
+BCrypt é ~7 ordens de magnitude mais lento que MD5 para um atacante, tornando força-bruta offline inviável. As passwords **nunca são guardadas em plaintext**; os testes
+[`PasswordHasher_DoesNotStore_PlaintextPassword`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs),
+[`PasswordHasher_UsesWorkFactor12`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs) e
+[`PasswordHasher_ProducesDifferentHashesForSameInput`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs) provam-no em código.
 
-BCrypt é **7 ordens de magnitude mais lento** que MD5 para um atacante com GPU, tornando ataques de força bruta offline computacionalmente inviáveis. O work factor 12 produz ~300ms por hash no servidor, o que é aceitável para autenticação mas impraticável para ataques em massa.
+### 3.3 Diagramas de arquitectura
 
-O teste [`SecurityInfrastructureTests.PasswordHasher_UsesWorkFactor12`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs) verifica em código que o work factor 12 está efectivamente a ser usado (string `$12$` no hash gerado).
+Diagramas criados/atualizados para este sprint. As fontes PlantUML (`.puml`) e as imagens (`.png`) estão em [`Deliverables/Diagrams/`](../Diagrams/).
 
-### 2.4 Controlo de Pull Requests com Aprovação Obrigatória
+#### Modelo de domínio (granularidade 1)
 
-- **CODEOWNERS** configurado para exigir revisão de `@mei-desofs` em todos os ficheiros:
-  - [`.github/CODEOWNERS`](../../.github/CODEOWNERS)
-- **Template de PR** com checklist de segurança obrigatório:
-  - [`.github/pull_request_template.md`](../../.github/pull_request_template.md)
-- **Branch protection** (a configurar em Settings → Branches → main):
-  - ≥ 1 aprovação obrigatória
-  - "Require review from Code Owners" activado
-  - Dismiss stale reviews activado
-  - Todos os checks de CI obrigatórios antes de merge
+Visão geral dos 3 agregados (`User`, `Vault`, `Document`) + agregado de suporte `AuditLog`, entidades de suporte, value objects e enums.
 
-> **Nota:** A configuração de branch protection é feita na interface do GitHub (Settings > Branches). Não pode ser versionada em ficheiros, mas está documentada no CODEOWNERS e no template de PR.
+![Modelo de domínio](../Diagrams/phase2_sprint2-domain-model.png)
+
+*Fonte: [`phase2_sprint2-domain-model.puml`](../Diagrams/phase2_sprint2-domain-model.puml)*
+
+#### Diagrama de componentes (C4)
+
+Vista C4 do sistema SafeVault: contentores (Autenticação, Gestão de Vaults, Gestão de Documentos, Auditoria), as APIs que cada um provê, os atores por papel RBAC (UI Admin/Manager/Viewer) e os recursos externos (filesystem API, PostgreSQL).
+
+![Diagrama de componentes](../Diagrams/phase2_sprint2-component.png)
+
+*Fonte: [`phase2_sprint2-component.puml`](../Diagrams/phase2_sprint2-component.puml)*
+
+#### Vista lógica (pacotes)
+
+As quatro camadas (Clean Architecture) como pacotes e a regra de dependência: as setas apontam "para dentro" (o Domínio não conhece a Infraestrutura nem a API).
+
+![Vista lógica](../Diagrams/phase2_sprint2-logical-view.png)
+
+*Fonte: [`phase2_sprint2-logical-view.puml`](../Diagrams/phase2_sprint2-logical-view.puml)*
+
+#### Diagrama de sequência — download de documento
+
+Execução de funcionalidades do sistema operativo no backend (requisito obrigatório): leitura de ficheiro do filesystem (`openfile`/`readObject`) com verificação de integridade SHA-256 antes da entrega.
+
+![Sequência — download de documento](../Diagrams/phase2_sprint2-sequence-download.png)
+
+*Fonte: [`phase2_sprint2-sequence-download.puml`](../Diagrams/phase2_sprint2-sequence-download.puml)*
 
 ---
 
-## 3. Build e Testes (35%)
+## 4. Build e Testes (35%)
 
-### 3.1 Pipeline CI Multi-Estágio
-
-O pipeline CI foi reestruturado em 4 estágios sequenciais/paralelos:
-
-```
-Stage 1: Build  →  Stage 2: Test & Coverage
-                →  Stage 3: SCA (paralelo com Stage 2)
-                           ↓
-                    Stage 4: Docker Build (só após Stage 2 + 3 passarem)
-```
+### 4.1 Pipeline CI multi-estágio
 
 Ficheiro: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
 
-**Estágios:**
-
-| Estágio | O que faz | Artefacto produzido |
-|---------|-----------|---------------------|
-| Stage 1 — Build | `dotnet build --configuration Release` | Cache da compilação |
-| Stage 2 — Test & Coverage | `dotnet test` com Cobertura XML | `coverage-report/` + resultados TRX |
-| Stage 3 — SCA | `dotnet list package --vulnerable --include-transitive` | `sca-report.txt` |
-| Stage 4 — Docker Build | `docker build` (sem push) para validar Dockerfile | — |
-
-### 3.2 SAST — CodeQL
-
-CodeQL configurado com queries estendidas de segurança (`security-extended,security-and-quality`):
-
-- [`.github/workflows/codeql.yml`](../../.github/workflows/codeql.yml)
-- Executa em cada push/PR para `main` e semanalmente (cron).
-- Resultados publicados no separador "Security" do repositório GitHub.
-
-### 3.3 DAST — OWASP ZAP
-
-Dois modos de execução:
-
-**Modo A — Manual (externo):** `workflow_dispatch` com URL de staging como parâmetro.
-
-**Modo B — Automático (Docker):** Sobe o stack completo (API + PostgreSQL via docker-compose) e executa o scan contra `http://localhost:8080`. Regras de supressão configuradas em [`.zap/rules.tsv`](../../.zap/rules.tsv).
-
-Ficheiro: [`.github/workflows/dast.yml`](../../.github/workflows/dast.yml)
-
-Relatório ZAP publicado como artefacto (HTML + JSON) em cada execução.
-
-#### Resultados do Scan Local — 16 de Junho de 2026
-
-Scan executado com `zap-api-scan.py` v2.17.0 usando a spec OpenAPI completa (`swagger.json`) contra a API Docker na porta 8080.
-
-**Comando executado:**
-```bash
-docker run --rm \
-  -v "$(pwd)/.zap:/zap/wrk/:rw" \
-  ghcr.io/zaproxy/zaproxy:stable \
-  zap-api-scan.py \
-  -t /zap/wrk/swagger.json -f openapi \
-  -O http://host.docker.internal:8080 \
-  -r /zap/wrk/zap-api-report.html \
-  -J /zap/wrk/zap-api-report.json \
-  -c /zap/wrk/rules.tsv -I
+```
+Stage 1: Build  →  Stage 2: Test & Coverage
+                →  Stage 3: SCA              (paralelo)
+                           ↓
+                    Stage 4: Docker Build
+                           ↓
+                    Stage 5: DAST (ZAP)      (push para main)
 ```
 
-**Sumário de resultados:**
+| Estágio | O que faz | Artefacto |
+|---------|-----------|-----------|
+| 1 — Build | `dotnet build -c Release` | cache de compilação |
+| 2 — Test & Coverage | `dotnet test` + Cobertura | `coverage-report/`, TRX |
+| 3 — SCA | `dotnet list package --vulnerable --include-transitive` | `sca-report.txt` |
+| 4 — Docker Build | valida o `Dockerfile` (build sem push) | — |
+| 5 — DAST | ZAP API scan autenticado contra o stack | `zap-api-report` |
 
-| Métrica | Valor |
-|---------|-------|
-| Versão ZAP | 2.17.0 |
-| Data | 2026-06-16 09:42:37 |
-| URLs importadas (OpenAPI) | 22 |
-| URLs totais testadas | 260 |
-| **FAIL** | **0** |
-| **WARN** | **3** |
-| PASS | 117 |
-| IGNORE | 0 |
+SAST adicional: [`codeql.yml`](../../.github/workflows/codeql.yml) (`security-extended`). Secret scanning: [`secret-scan.yml`](../../.github/workflows/secret-scan.yml) (Gitleaks).
 
-**Alertas activos (WARN):**
+### 4.2 Testes
 
-| ID | Nome | Risco | Confiança | Endpoint | Análise |
-|----|------|-------|-----------|----------|---------|
-| 100000 | A Server Error response code (500) | Low | High | `POST /api/auth/register` | ZAP envia payload inválido (campos em falta); a API devolve 500 em vez de 400. Ver secção abaixo. |
-| 90022 | Application Error Disclosure | Low | Medium | `POST /api/auth/register` | O header `HTTP/1.1 500 Internal Server Error` é exposto. Decorre do mesmo 500. |
-| 10023 | Information Disclosure - Debug Error Messages | Low | Medium | `POST /api/auth/register` | A resposta contém a string `"Internal server error"` do `ExceptionHandlingMiddleware`. |
+**106 testes, 0 falhas** (verificado em 16/06/2026 — [Apêndice A.1](#a1-build-e-testes-unitários)):
 
-**Análise dos WARNs — `POST /api/auth/register`:**
+| Projeto | Testes |
+|---------|--------|
+| `SafeVault.DomainTests` | 35 |
+| `SafeVault.ApplicationTests` | 33 |
+| `SafeVault.InfrastructureTests` | 22 |
+| `SafeVault.InterfaceAdaptersTests` | 16 |
+| **Total** | **106** |
 
-O ZAP injeta payloads gerados automaticamente a partir da spec OpenAPI (e.g., corpo vazio `{}`). O endpoint `/api/auth/register` não trata correctamente a deserialização de campos obrigatórios em falta, lançando uma excepção não tratada em vez de responder com 400 Bad Request. O `ExceptionHandlingMiddleware` apanha a excepção e devolve `{"message":"Internal server error"}` com status 500, o que não expõe stack traces nem detalhes internos, mas o código de status é incorrecto.
+Testes de regressão de segurança dedicados, anotados por ID de ameaça Phase 1:
+[`SecurityThreatMitigationTests.cs`](../../tests/DomainTests/SecurityThreatMitigationTests.cs),
+[`SecurityApplicationTests.cs`](../../tests/ApplicationTests/SecurityApplicationTests.cs),
+[`SecurityInfrastructureTests.cs`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs).
 
-**Resolução planeada:** adicionar validação de model binding (`[Required]` + `ModelState.IsValid`) no controller de auth, garantindo que payloads inválidos retornem 400 antes de chegar à lógica de serviço.
+### 4.3 DAST — OWASP ZAP
 
-**Regras de supressão configuradas** ([`.zap/rules.tsv`](../../.zap/rules.tsv)):
+A SafeVault é uma **API REST JSON**: um *baseline scan* (só spider + passive) quase não encontra superfície de ataque. Por isso usa-se o **ZAP API scan** a partir da especificação OpenAPI (`.zap/swagger.json`), **autenticado** com um JWT obtido em runtime, executado na **mesma rede Docker** que a API.
 
-| ID | Acção | Justificação |
-|----|-------|-------------|
-| 10016 | IGNORE | `X-XSS-Protection` deprecated; CSP é usado em substituição |
-| 10096 | IGNORE | Timestamps em JSON são comportamento esperado |
-| 10035 | WARN | HSTS não aplicável em HTTP puro (CI/Docker sem TLS) |
-| 10038 | WARN | REST API sem HTML; CSP menos crítico |
-| 10036 | WARN | Server header deve ser suprimido em produção |
-| 10021 | FAIL | `X-Content-Type-Options` obrigatório (definido pelo `SecurityHeadersMiddleware`) |
+- Pipeline: [`dast.yml`](../../.github/workflows/dast.yml) (Stage 5 do CI em push para `main`; também manual para alvo externo).
+- Configuração e política de alertas: [`.zap/`](../../.zap/) (`rules.tsv` marca SQLi/XSS/Path Traversal/OS Command Injection como **FAIL**).
+- Documentação do setup: [`.zap/README.md`](../../.zap/README.md).
 
-Relatórios completos: [`.zap/zap-api-report.html`](../../.zap/zap-api-report.html) · [`.zap/zap-api-report.json`](../../.zap/zap-api-report.json)
+**Resultado (16/06/2026):** `FAIL-NEW: 0 · WARN-NEW: 0 · PASS: 119`.
 
-### 3.4 Testes de Regressão de Segurança
+> **Nota sobre o falso positivo de SQL Injection.** Numa execução intermédia, o ZAP
+> reportou SQLi em `/api/audit`. Investigação: o token de autenticação vinha `null`
+> (porque o `register` estava a falhar — ver [1.1](#11-bugs-encontrados-e-corrigidos-durante-a-verificação-final)),
+> pelo que todos os pedidos autenticados davam 401 e a regra disparava por
+> diferença de respostas de erro. Após corrigir o arranque e usar um token válido, a
+> regra `40018` (SQLi) passa a **PASS** — confirmando que o EF Core parametrizado
+> segura. Evidência no [Apêndice A.2](#a2-dast--owasp-zap-api-scan-autenticado).
 
-Foram criados testes especificamente para demonstrar que as ameaças identificadas em Phase 1 estão mitigadas. Cada teste está anotado com o ID da ameaça correspondente.
+### 4.4 Controlo de Pull Requests
 
-**Ficheiros criados:**
+- [`.github/CODEOWNERS`](../../.github/CODEOWNERS) — exige revisão de membro da equipa em todos os ficheiros (e paths sensíveis: workflows, `Security/`, `Middleware/`).
+- [`.github/pull_request_template.md`](../../.github/pull_request_template.md) — checklist de segurança obrigatório.
+- **Branch protection** em `main` (GitHub → Settings → Branches): ≥ 1 aprovação, *Require review from Code Owners*, *Dismiss stale reviews*, checks de CI obrigatórios antes do merge.
 
-| Ficheiro | Ameaças cobertas |
-|----------|-----------------|
-| [`SecurityThreatMitigationTests.cs`](../../tests/DomainTests/SecurityThreatMitigationTests.cs) | T-05, T-06, AC-01, RS-01.4, RS-01.5 |
-| [`SecurityApplicationTests.cs`](../../tests/ApplicationTests/SecurityApplicationTests.cs) | AC-02, AC-04, T-07, T-08, T-10, T-11, RS-01.3, RS-02.3, RS-04.4 |
-| [`SecurityInfrastructureTests.cs`](../../tests/InfrastructureTests/SecurityInfrastructureTests.cs) | T-01, T-02, T-09, RS-01.5, RS-04.5 |
+### 4.5 Pipeline de release automático
 
-**Cobertura de segurança por teste:**
-
-| Teste | Ameaça Mitigada | Resultado |
-|-------|----------------|-----------|
-| `User_LocksOut_AfterFiveFailedAttempts` | T-05, T-06 (brute force) | ✅ PASS |
-| `PasswordPolicy_Rejects_ShortPasswords` | RS-01.5 (password fraca) | ✅ PASS |
-| `PasswordPolicy_Rejects_WeakPasswords` | RS-01.5 (sem complexidade) | ✅ PASS |
-| `Upload_RejectsFile_WhenMagicBytesDoNotMatchMimeType` | T-08, AC-04 (upload malicioso) | ✅ PASS |
-| `Upload_Throws_WhenActorHasNoWriteAccess` | T-14, AC-02 (IDOR write) | ✅ PASS |
-| `Download_Throws_WhenActorHasNoReadAccess` | T-11, AC-02 (IDOR read) | ✅ PASS |
-| `Download_Throws_WhenFileHashMismatch` | T-10, T-21 (integridade) | ✅ PASS |
-| `Login_Throws_WhenAccountIsLocked` | T-05, AC-01 (brute force) | ✅ PASS |
-| `JwtValidation_Rejects_AlgorithmNoneToken` | T-01, T-02 (JWT tampering) | ✅ PASS |
-| `JwtValidation_Rejects_TamperedPayload` | T-02 (payload elevation) | ✅ PASS |
-| `FileStorage_Rejects_PathTraversalInFilename` | T-09, AC-03 (path traversal) | ✅ PASS |
-| `FileStorage_Rejects_PathTraversalOnRead` | T-09, AC-03 (path traversal) | ✅ PASS |
-| `PasswordHasher_DoesNotStore_PlaintextPassword` | RS-01.5 (bcrypt) | ✅ PASS |
-| `PasswordHasher_UsesWorkFactor12` | RS-01.5 (cost factor) | ✅ PASS |
-| `PasswordHasher_ProducesDifferentHashesForSameInput` | RS-01.5 (salt único) | ✅ PASS |
-
-**Total de testes (todo o projecto):** 106 — 0 falhas.
-
-### 3.5 Análise de Dependências (SCA)
-
-O Stage 3 do pipeline executa `dotnet list package --vulnerable --include-transitive` e gera um relatório. Evidência de execução disponível como artefacto `sca-report` em cada run de CI.
-
-A análise confirmou que os pacotes actuais **não têm vulnerabilidades CVE conhecidas** na data de entrega.
+[`release.yml`](../../.github/workflows/release.yml): ao fazer push de uma tag `v*.*.*` →
+testes completos → binários self-contained (`linux-x64`, `win-x64`, `osx-x64`) →
+imagem Docker multi-arch (amd64/arm64) publicada em **GHCR e Docker Hub** com tags semânticas →
+**GitHub Release** com artefactos e notas geradas automaticamente.
 
 ---
 
-## 4. Pipeline Automation
+## 5. Produção (5%)
 
-### 4.1 Workflows Implementados
+- **Docker Compose** ([`docker-compose.yml`](../../docker-compose.yml)) com volumes persistentes (dados, storage, logs), healthchecks e `restart: unless-stopped`.
+- **Contentor non-root:** o [`Dockerfile`](../../Dockerfile) cria o utilizador `safevault` (build multi-stage).
+- **Versionamento de imagens:** cada release guarda a nova versão em GHCR e Docker Hub (ver [4.5](#45-pipeline-de-release-automático)).
+- **Gestão de configuração e segredos:** sem credenciais versionadas; injectadas por env vars; startup falha se faltarem; [`.env.example`](../../.env.example) documenta as variáveis (incluindo `DB_PORT`/`API_PORT` configuráveis).
 
-| Workflow | Trigger | O que faz |
-|----------|---------|-----------|
-| [`ci.yml`](../../.github/workflows/ci.yml) | Push/PR para `main` | Build → Test → SCA → Docker Build |
-| [`codeql.yml`](../../.github/workflows/codeql.yml) | Push/PR `main`, cron semanal | SAST com CodeQL (security-extended) |
-| [`dast.yml`](../../.github/workflows/dast.yml) | Manual ou workflow_call | DAST com OWASP ZAP |
-| [`release.yml`](../../.github/workflows/release.yml) | Push de tag `v*.*.*` | Testes → Binários multi-plataforma → Docker → GitHub Release |
+---
 
-### 4.2 Pipeline de Release Automático
+## 6. Operação (5%)
 
-Ao fazer push de uma tag semântica (ex: `v1.0.0`), o workflow `release.yml` executa:
+- **Monitorização/auditoria:** todos os eventos de segurança (login, upload, download, delete, falhas de integridade) registados em `AuditLog` e em logs Serilog diários (retenção 14 dias).
+- **Rastreabilidade de incidentes:** correlation ID em todas as respostas de erro.
+- **Pentesting/vuln management:** DAST (ZAP) + SAST (CodeQL) + SCA + secret scanning automatizados no pipeline.
+- **Health checks:** `/health` e `/health/ready` para orquestradores/balanceadores.
 
-1. **Testes completos** — nenhuma release é criada se os testes falharem.
-2. **Build de binários self-contained** para 3 plataformas:
-   - `linux-x64` → `.tar.gz`
-   - `windows-x64` → `.zip` (executável `.exe` incluído)
-   - `macos-x64` → `.tar.gz`
-3. **Imagem Docker multi-arch** (linux/amd64, linux/arm64) publicada em:
-   - GitHub Container Registry (GHCR): `ghcr.io/<owner>/safevault-api:<version>`
-   - Docker Hub: `<dockerhub_user>/safevault-api:<version>`
-4. **GitHub Release** criado automaticamente com todos os artefactos e release notes geradas automaticamente.
+---
 
-**Variáveis secretas necessárias no repositório:**
+## 7. ASVS (15%)
 
-- `DOCKERHUB_USERNAME` — utilizador do Docker Hub
-- `DOCKERHUB_TOKEN` — token de acesso ao Docker Hub
+Checklist ASVS 5.0 completo em [`phase2_sprint2_asvs_checklist.md`](phase2_sprint2_asvs_checklist.md) e no tracker [`ASVS_5.0_Tracker.xlsx`](../../ASVS_5.0_Tracker.xlsx). A rastreabilidade requisito ASVS → ameaça → controlo → teste está na [Secção 8](#8-rastreabilidade--ameaças-phase-1--sprint-2) e na matriz dedicada.
 
-### 4.3 Docker — Execução Local
+---
 
-```bash
-# 1. Copiar e preencher variáveis de ambiente
-cp .env.example .env
-# editar .env: POSTGRES_PASSWORD e JWT_SIGNING_KEY
+## 8. Rastreabilidade — Ameaças Phase 1 → Sprint 2
 
-# 2. Subir o stack completo (API + PostgreSQL)
-docker compose up -d
+Matriz completa (22 ameaças STRIDE, mitigação, evidência de código, teste e estado) em
+[`phase2_sprint2_traceability_matrix.md`](phase2_sprint2_traceability_matrix.md).
 
-# 3. API disponível em http://localhost:8080
-# Swagger UI disponível em http://localhost:8080/swagger (apenas em Development)
+**Resumo:** 19 ameaças **RESOLVIDAS e testadas**, 2 **PARCIAIS** (T-17 manipulação de logs por Admin; T-18 permissões de filesystem — controlos arquitecturais/SO), 1 **INFRA** (T-20 TLS, terminado em proxy reverso em produção).
+
+**Ameaça que deixou de existir:** **T-16 — exposição de connection string no repositório**.
+Em Sprint 1 o `appsettings.json` já tinha o campo vazio; em Sprint 2 adicionou-se
+**validação no arranque** (a app lança `InvalidOperationException` se a connection
+string ou a chave JWT estiverem ausentes), pelo que nenhuma versão com credenciais
+hardcoded passa no CI. Passou de *risco activo* a **eliminada por design**.
+
+---
+
+## Apêndice A — Evidência de execução (16/06/2026)
+
+Ambiente: Docker (API + PostgreSQL via `docker compose -p safevault`), .NET 9 SDK (contentor).
+
+### A.1 Build e testes unitários
+
+```
+$ dotnet test --configuration Release
+Passed!  - Failed: 0, Passed: 35, Total: 35 - SafeVault.DomainTests.dll (net9.0)
+Passed!  - Failed: 0, Passed: 33, Total: 33 - SafeVault.ApplicationTests.dll (net9.0)
+Passed!  - Failed: 0, Passed: 22, Total: 22 - SafeVault.InfrastructureTests.dll (net9.0)
+Passed!  - Failed: 0, Passed: 16, Total: 16 - SafeVault.InterfaceAdaptersTests.dll (net9.0)
 ```
 
-Ficheiros Docker:
+### A.2 DAST — OWASP ZAP API scan (autenticado)
 
-- [`Dockerfile`](../../Dockerfile) — build multi-stage, execução como non-root user
-- [`docker-compose.yml`](../../docker-compose.yml) — stack local completo
-- [`docker-compose.dast.yml`](../../docker-compose.dast.yml) — override para DAST com ZAP
-- [`.dockerignore`](../../.dockerignore) — exclui build artifacts e secrets
-- [`.env.example`](../../.env.example) — template para variáveis de ambiente
+```
+$ zap-api-scan.py -t swagger.json -f openapi -O http://api:8080 \
+    -c rules.tsv -z "<inject Bearer JWT>"
+...
+PASS: SQL Injection [40018]
+PASS: Cross Site Scripting (Reflected) [40012]
+PASS: Path Traversal [6]
+PASS: Remote OS Command Injection [90020]
+FAIL-NEW: 0   FAIL-INPROG: 0   WARN-NEW: 0   WARN-INPROG: 0   INFO: 0   IGNORE: 0   PASS: 119
+```
 
----
+Relatórios: [`.zap/zap-api-report.html`](../../.zap/zap-api-report.html) · [`.zap/zap-api-report.json`](../../.zap/zap-api-report.json).
 
-## 5. Produção e Operações
+### A.3 Correcção do arranque (migrations)
 
-### 5.1 Gestão de Infraestrutura de Produção
+Antes (logs da API, schema inexistente):
+```
+SqlState: 42P01
+MessageText: relation "Users" does not exist
+```
+Depois (register devolve token válido, endpoint protegido responde):
+```
+$ curl -X POST .../api/auth/register -d '{"email":"admin@safevault.io","password":"...","role":1}'
+{ "accessToken": "eyJhbGciOiJIUzI1NiIs...", "accessTokenExpiresAtUtc": "..." }
 
-- **Docker Compose** como orquestrador local/produção mínima com volumes persistentes para dados e logs.
-- **Non-root container:** O Dockerfile cria um utilizador dedicado `safevault` para executar a aplicação.
-- **Health check** no serviço PostgreSQL garante que a API só inicia quando a BD está pronta.
-- **Restart policy** `unless-stopped` garante recuperação automática após crash.
+$ curl .../api/auth/csrf -H "Authorization: Bearer <token>"
+{ "token": "CfDJ8...", "expiresAtUtc": "..." }
+```
 
-### 5.2 Logging e Rastreabilidade
-
-- **Serilog** com dois sinks: consola (desenvolvimento) e ficheiro diário rotativo (`logs/audit-YYYYMMDD.log`).
-- **Retenção:** 14 dias de logs.
-- **Correlation ID** em todas as respostas de erro para rastreabilidade de incidentes.
-- **Auditoria na BD:** todos os eventos de segurança (login, upload, download, delete) registados em `AuditLog`.
-
-### 5.3 Gestão de Configuração e Segredos
-
-- Sem credenciais versionadas no repositório.
-- Secrets injectados via variáveis de ambiente (Docker env, GitHub Secrets).
-- Validação em runtime: startup falha imediatamente se JWT key ou connection string estiverem ausentes.
-- Ficheiro `.env.example` documenta as variáveis necessárias sem expor valores reais.
-
----
-
-## 6. ASVS
-
-O ASVS checklist actualizado está em:
-
-- [`phase2_sprint2_asvs_checklist.md`](phase2_sprint2_asvs_checklist.md)
+Input inválido passou a devolver **400** (já não 500):
+```
+$ curl -o /dev/null -w "%{http_code}" -X POST .../api/auth/register -d '{"email":"x@y.com","password":"weak","role":1}'
+400
+```
 
 ---
 
-## 7. Rastreabilidade — Ameaças Phase 1 → Sprint 2
+## Referências
 
-A matrix de rastreabilidade actualizada com evidências de código e testes está em:
-
-- [`phase2_sprint2_traceability_matrix.md`](phase2_sprint2_traceability_matrix.md)
-
-**Resumo:** Das 22 ameaças identificadas em Phase 1, **19 estão totalmente mitigadas e testadas**, 2 são parcialmente mitigadas (T-17 manipulação de logs de auditoria por Admin — mitigação arquitectural sem solução técnica completa, e T-18 permissões de filesystem), e 1 (T-20 TLS) depende de configuração de infraestrutura em produção.
-
----
-
-## 8. Referências
-
-- [OWASP Top 10 2021](https://owasp.org/Top10/)
-- [OWASP ASVS v4.0](https://github.com/OWASP/ASVS)
-- [OWASP ZAP](https://www.zaproxy.org/)
+- [OWASP Top 10 2021](https://owasp.org/Top10/) · [OWASP ASVS](https://github.com/OWASP/ASVS) · [OWASP ZAP](https://www.zaproxy.org/)
 - [NIST SP 800-63B — Password Guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html)
-- [BCrypt vs SHA for passwords](https://security.stackexchange.com/a/31846)
 - [GitHub Actions CodeQL](https://docs.github.com/en/code-security/code-scanning)
