@@ -16,6 +16,9 @@ public class AuthController(IAuthService authService, ICsrfTokenService csrfToke
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
         var result = await authService.RegisterAsync(request, cancellationToken);
         return Ok(result);
     }
@@ -24,6 +27,9 @@ public class AuthController(IAuthService authService, ICsrfTokenService csrfToke
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         var userAgent = Request.Headers.UserAgent.ToString();
         var result = await authService.LoginAsync(request, ip, userAgent, cancellationToken);
@@ -34,6 +40,9 @@ public class AuthController(IAuthService authService, ICsrfTokenService csrfToke
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Refresh([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
         var result = await authService.RefreshTokenAsync(request, cancellationToken);
         return Ok(result);
     }

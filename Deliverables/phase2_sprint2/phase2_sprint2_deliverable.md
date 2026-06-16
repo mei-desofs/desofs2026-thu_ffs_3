@@ -154,6 +154,63 @@ Ficheiro: [`.github/workflows/dast.yml`](../../.github/workflows/dast.yml)
 
 Relatório ZAP publicado como artefacto (HTML + JSON) em cada execução.
 
+#### Resultados do Scan Local — 16 de Junho de 2026
+
+Scan executado com `zap-api-scan.py` v2.17.0 usando a spec OpenAPI completa (`swagger.json`) contra a API Docker na porta 8080.
+
+**Comando executado:**
+```bash
+docker run --rm \
+  -v "$(pwd)/.zap:/zap/wrk/:rw" \
+  ghcr.io/zaproxy/zaproxy:stable \
+  zap-api-scan.py \
+  -t /zap/wrk/swagger.json -f openapi \
+  -O http://host.docker.internal:8080 \
+  -r /zap/wrk/zap-api-report.html \
+  -J /zap/wrk/zap-api-report.json \
+  -c /zap/wrk/rules.tsv -I
+```
+
+**Sumário de resultados:**
+
+| Métrica | Valor |
+|---------|-------|
+| Versão ZAP | 2.17.0 |
+| Data | 2026-06-16 09:42:37 |
+| URLs importadas (OpenAPI) | 22 |
+| URLs totais testadas | 260 |
+| **FAIL** | **0** |
+| **WARN** | **3** |
+| PASS | 117 |
+| IGNORE | 0 |
+
+**Alertas activos (WARN):**
+
+| ID | Nome | Risco | Confiança | Endpoint | Análise |
+|----|------|-------|-----------|----------|---------|
+| 100000 | A Server Error response code (500) | Low | High | `POST /api/auth/register` | ZAP envia payload inválido (campos em falta); a API devolve 500 em vez de 400. Ver secção abaixo. |
+| 90022 | Application Error Disclosure | Low | Medium | `POST /api/auth/register` | O header `HTTP/1.1 500 Internal Server Error` é exposto. Decorre do mesmo 500. |
+| 10023 | Information Disclosure - Debug Error Messages | Low | Medium | `POST /api/auth/register` | A resposta contém a string `"Internal server error"` do `ExceptionHandlingMiddleware`. |
+
+**Análise dos WARNs — `POST /api/auth/register`:**
+
+O ZAP injeta payloads gerados automaticamente a partir da spec OpenAPI (e.g., corpo vazio `{}`). O endpoint `/api/auth/register` não trata correctamente a deserialização de campos obrigatórios em falta, lançando uma excepção não tratada em vez de responder com 400 Bad Request. O `ExceptionHandlingMiddleware` apanha a excepção e devolve `{"message":"Internal server error"}` com status 500, o que não expõe stack traces nem detalhes internos, mas o código de status é incorrecto.
+
+**Resolução planeada:** adicionar validação de model binding (`[Required]` + `ModelState.IsValid`) no controller de auth, garantindo que payloads inválidos retornem 400 antes de chegar à lógica de serviço.
+
+**Regras de supressão configuradas** ([`.zap/rules.tsv`](../../.zap/rules.tsv)):
+
+| ID | Acção | Justificação |
+|----|-------|-------------|
+| 10016 | IGNORE | `X-XSS-Protection` deprecated; CSP é usado em substituição |
+| 10096 | IGNORE | Timestamps em JSON são comportamento esperado |
+| 10035 | WARN | HSTS não aplicável em HTTP puro (CI/Docker sem TLS) |
+| 10038 | WARN | REST API sem HTML; CSP menos crítico |
+| 10036 | WARN | Server header deve ser suprimido em produção |
+| 10021 | FAIL | `X-Content-Type-Options` obrigatório (definido pelo `SecurityHeadersMiddleware`) |
+
+Relatórios completos: [`.zap/zap-api-report.html`](../../.zap/zap-api-report.html) · [`.zap/zap-api-report.json`](../../.zap/zap-api-report.json)
+
 ### 3.4 Testes de Regressão de Segurança
 
 Foram criados testes especificamente para demonstrar que as ameaças identificadas em Phase 1 estão mitigadas. Cada teste está anotado com o ID da ameaça correspondente.

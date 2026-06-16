@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SafeVault.DomainTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0e507b8f32d354cecf917a058080f9aec285afe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eef09b107b8008e59a54df650cbcd91ab6900f13")]
 [assembly: System.Reflection.AssemblyProductAttribute("SafeVault.DomainTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SafeVault.DomainTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

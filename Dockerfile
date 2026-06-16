@@ -8,7 +8,7 @@ COPY src/Application/SafeVault.Application.csproj     src/Application/
 COPY src/Infrastructure/SafeVault.Infrastructure.csproj src/Infrastructure/
 COPY src/InterfaceAdapters/SafeVault.InterfaceAdapters.csproj src/InterfaceAdapters/
 
-RUN dotnet restore
+RUN dotnet restore src/InterfaceAdapters/SafeVault.InterfaceAdapters.csproj
 
 COPY src/ src/
 

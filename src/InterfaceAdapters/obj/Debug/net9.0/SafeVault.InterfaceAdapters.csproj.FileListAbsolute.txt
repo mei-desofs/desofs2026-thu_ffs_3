@@ -364,3 +364,4 @@ C:\Users\Admin\OneDrive\Documentos\ISEP\DESOFT\desofs2026-thu_ffs_3\src\Interfac
 C:\Users\Admin\OneDrive\Documentos\ISEP\DESOFT\desofs2026-thu_ffs_3\src\InterfaceAdapters\obj\Debug\net9.0\SafeVault.InterfaceAdapters.pdb
 C:\Users\Admin\OneDrive\Documentos\ISEP\DESOFT\desofs2026-thu_ffs_3\src\InterfaceAdapters\obj\Debug\net9.0\SafeVault.InterfaceAdapters.genruntimeconfig.cache
 C:\Users\Admin\OneDrive\Documentos\ISEP\DESOFT\desofs2026-thu_ffs_3\src\InterfaceAdapters\obj\Debug\net9.0\ref\SafeVault.InterfaceAdapters.dll
+C:\Users\goncalo.barbosa\OneDrive - Unavets Services S.L\Documents\ISEP\DESOFT\DESOFT\desofs2026-thu_ffs_3\src\InterfaceAdapters\bin\Debug\net9.0\HealthChecks.NpgSql.dll

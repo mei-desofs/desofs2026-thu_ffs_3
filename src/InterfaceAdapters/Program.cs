@@ -91,6 +91,11 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Security headers must be registered before UseSwagger so they apply to all responses,
+// including /swagger/v1/swagger.json which short-circuits the pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -102,9 +107,6 @@ if (!app.Environment.IsEnvironment("Docker"))
 {
     app.UseHttpsRedirection();
 }
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<IastMonitoringMiddleware>();
 app.UseMiddleware<CsrfTokenMiddleware>();
 
