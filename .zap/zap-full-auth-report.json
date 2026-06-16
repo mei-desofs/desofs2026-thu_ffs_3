@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "2.17.0",
-	"@generated": "Tue, 16 Jun 2026 10:11:34",
-	"created": "2026-06-16T10:11:34.998631120Z",
+	"@generated": "Tue, 16 Jun 2026 10:25:25",
+	"created": "2026-06-16T10:25:25.389887034Z",
 	"site":[ 
 		{
 			"@name": "http://host.docker.internal:8080",
@@ -21,7 +21,7 @@
 					"desc": "<p>This page contains an error/warning message that may disclose sensitive information like the location of the file that produced the unhandled exception. This information can be used to launch further attacks against the web application. The alert could be a false positive if the error message is found inside a documentation page.</p>",
 					"instances":[ 
 						{
-							"id": "3",
+							"id": "0",
 							"uri": "http://host.docker.internal:8080/api/auth/register",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/register ()({email,password,role})",
 							"method": "POST",
@@ -51,7 +51,7 @@
 					"desc": "<p>The response appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure the list of common debug messages.</p>",
 					"instances":[ 
 						{
-							"id": "4",
+							"id": "2",
 							"uri": "http://host.docker.internal:8080/api/auth/register",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/register ()({email,password,role})",
 							"method": "POST",
@@ -76,22 +76,12 @@
 					"alert": "Authentication Request Identified",
 					"name": "Authentication Request Identified",
 					"riskcode": "0",
-					"confidence": "1",
-					"riskdesc": "Informational (Low)",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
 					"desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
 					"instances":[ 
 						{
-							"id": "2",
-							"uri": "http://host.docker.internal:8080/api/users",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/users ()({email,password,role})",
-							"method": "POST",
-							"param": "email",
-							"attack": "",
-							"evidence": "password",
-							"otherinfo": "userParam=email\nuserValue=zaproxy@example.com\npasswordParam=password"
-						},
-						{
-							"id": "1",
+							"id": "3",
 							"uri": "http://host.docker.internal:8080/api/auth/login",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -101,14 +91,14 @@
 							"otherinfo": "userParam=email\nuserValue=zaproxy@example.com\npasswordParam=password"
 						}
 					],
-					"count": "2",
+					"count": "1",
 					"systemic": false,
 					"solution": "<p>This is an informational alert rather than a vulnerability and so there is nothing to fix.</p>",
 					"otherinfo": "<p>userParam=email</p><p>userValue=zaproxy@example.com</p><p>passwordParam=password</p>",
 					"reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
 					"cweid": "-1",
 					"wascid": "-1",
-					"sourceid": "18"
+					"sourceid": "6"
 				},
 				{
 					"pluginid": "10024",
@@ -122,7 +112,7 @@
 					"instances":[ 
 						{
 							"id": "5",
-							"uri": "http://host.docker.internal:8080/api/audit?fromUtc=fromUtc&toUtc=toUtc&userId=userId",
+							"uri": "http://host.docker.internal:8080/api/audit?fromUtc=fromUtc&toUtc=toUtc&userId=f0001259-1f1d-4a5d-b510-58730b468603",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/audit (fromUtc,toUtc,userId)",
 							"method": "GET",
 							"param": "userId",
@@ -151,7 +141,7 @@
 					"desc": "<p>The given response has been identified as containing a session management token. The 'Other Info' field contains a set of header tokens that can be used in the Header Based Session Management Method. If the request is in a context which has a Session Management Method set to \"Auto-Detect\" then this rule will change the session management to use the tokens identified.</p>",
 					"instances":[ 
 						{
-							"id": "0",
+							"id": "4",
 							"uri": "http://host.docker.internal:8080/api/auth/csrf",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/csrf",
 							"method": "GET",
@@ -181,7 +171,7 @@
 					"desc": "<p>Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.</p>",
 					"instances":[ 
 						{
-							"id": "6",
+							"id": "8",
 							"uri": "http://host.docker.internal:8080/api/auth/login",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -191,7 +181,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "8",
+							"id": "6",
 							"uri": "http://host.docker.internal:8080/api/auth/refresh",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/auth\/refresh ()({refreshToken})",
 							"method": "POST",
@@ -218,7 +208,7 @@
 					"reference": "<p>https://owasp.org/wstg</p>",
 					"cweid": "0",
 					"wascid": "0",
-					"sourceid": "42"
+					"sourceid": "44"
 				}
 			]
 		}
