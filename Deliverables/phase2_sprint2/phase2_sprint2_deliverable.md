@@ -317,10 +317,10 @@ MessageText: relation "Users" does not exist
 Depois (register devolve token válido, endpoint protegido responde):
 ```
 $ curl -X POST .../api/auth/register -d '{"email":"admin@safevault.io","password":"...","role":1}'
-{ "accessToken": "eyJhbGciOiJIUzI1NiIs...", "accessTokenExpiresAtUtc": "..." }
+{ "accessToken": "<JWT truncado>...", "accessTokenExpiresAtUtc": "..." }
 
 $ curl .../api/auth/csrf -H "Authorization: Bearer <token>"
-{ "token": "CfDJ8...", "expiresAtUtc": "..." }
+{ "token": "<CSRF token>", "expiresAtUtc": "..." }
 ```
 
 Input inválido passou a devolver **400** (já não 500):

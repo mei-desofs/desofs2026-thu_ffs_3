@@ -27,6 +27,21 @@ paths = [
 ]
 
 [[allowlists]]
+description = "DAST (OWASP ZAP) report artifacts — contêm apenas JWTs de teste expirados/efémeros gerados durante o scan, assinados com chaves descartáveis de CI; não são segredos de produção"
+paths = [
+    '''\.zap/''',
+]
+
+[[allowlists]]
+description = "Falsos positivos conhecidos: documentação (tokens ilustrativos/truncados), connection string baseada em variáveis de ambiente, e hashes BCrypt de contas de demonstração (não são segredos reais)"
+paths = [
+    '''Deliverables/''',
+    '''docker-compose\.yml''',
+    '''docker-compose\..*\.yml''',
+    '''src/Infrastructure/seed_demo_data\.sql''',
+]
+
+[[allowlists]]
 description = "Empty placeholder values in appsettings (empty string is intentional)"
 regexes = [
     "\"SigningKey\": \"\"",
