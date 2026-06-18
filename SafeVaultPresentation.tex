@@ -1,0 +1,164 @@
+\documentclass[aspectratio=169]{beamer}
+
+% --- Configurações de Língua e Tipografia ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{lmodern}
+
+% --- Temas e Cores ---
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% --- Pacotes Adicionais ---
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% --- Configuração de Código (Listings) ---
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{orange},
+    breaklines=true,
+    showstringspaces=false,
+    frame=single
+}
+
+% --- Informações da Apresentação ---
+\title[SafeVault]{SafeVault: Cofre Digital de Documentos}
+\subtitle{Segurança e Desenvolvimento Seguro (DESOFS 25/26)}
+\author[Grupo 3]{João Loureiro, Gonçalo Barbosa, Miguel Amorim, Diogo Maria}
+\institute[ISEP]{Instituto Superior de Engenharia do Porto}
+\date{18 de junho de 2026}
+
+% --- Logotipo (Opcional - Comentado para evitar erro se não existir) ---
+% \logo{\includegraphics[height=0.8cm]{logo_isep.png}}
+
+\begin{document}
+
+% --- Slide de Título ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- Sumário ---
+\begin{frame}{Sumário}
+    \tableofcontents
+\end{frame}
+
+\section{Introdução e Objetivos}
+\begin{frame}{Visão Geral do SafeVault}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item \textbf{O que é?} API REST para gestão segura de documentos sensíveis.
+            \item \textbf{Tecnologias:} .NET 9, PostgreSQL, Docker.
+            \item \textbf{Foco PBS (Professor):}
+            \begin{itemize}
+                \item Processo de Desenvolvimento Seguro (S-SDLC).
+                \item Resiliência: Reduzir, reparar e detetar danos.
+                \item Funções de SO via input do utilizador (Ficheiros).
+            \end{itemize}
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \begin{exampleblock}{Arquitetura}
+            Clean Architecture + DDD
+            \begin{itemize}
+                \item 3 Agregados (User, Vault, Doc)
+                \item Auditoria Integrada
+            \end{itemize}
+        \end{exampleblock}
+    \end{columns}
+\end{frame}
+
+\section{Desenvolvimento Seguro (S-SDLC)}
+\begin{frame}{Ciclo de Vida de Desenvolvimento Seguro}
+    \begin{itemize}
+        \item \textbf{Automação na Pipeline (GitHub Actions):}
+        \begin{itemize}
+            \item \textbf{SAST:} CodeQL (análise de vulnerabilidades no código).
+            \item \textbf{SCA:} Verificação de pacotes vulneráveis (\texttt{dotnet list package}).
+            \item \textbf{Secret Scanning:} Prevenção de fuga de chaves via Gitleaks.
+        \end{itemize}
+        \item \textbf{Governação de Código:}
+        \begin{itemize}
+            \item \texttt{CODEOWNERS} e revisões obrigatórias.
+            \item Checklists de segurança em cada Pull Request.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Arquitetura e Segurança}
+\begin{frame}{Segurança por Design}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Autenticação:} BCrypt (Work Factor 12).
+            \item \textbf{Autorização:} RBAC (Admin/Manager/Viewer) com verificação server-side.
+            \item \textbf{Integridade:} Hash SHA-256 verificado em cada upload/download.
+            \item \textbf{Hardening:} Headers de segurança HTTP e erros sem detalhe interno.
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \begin{alertblock}{IAST em Runtime}
+            Middleware de deteção de padrões suspeitos (SQLi/XSS/Path Traversal) em tempo real.
+        \end{alertblock}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Resiliência: Reduzir, Reparar e Detetar}
+    \begin{itemize}
+        \item \textbf{Reduzir:} Rate limiting e lockout de conta após 5 falhas.
+        \item \textbf{Reparar (Rollback):} Sistema de versionamento de documentos permite recuperar estados anteriores.
+        \item \textbf{Detetar:} 
+        \begin{itemize}
+            \item Auditoria completa na BD de todas as operações sensíveis.
+            \item Logs Serilog rotativos com Correlation ID.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Testes e Validação}
+\begin{frame}{Validação e Resultados}
+    \begin{itemize}
+        \item \textbf{DAST (OWASP ZAP):} 
+        \begin{itemize}
+            \item API Scan autenticado via OpenAPI.
+            \item \textbf{Resultado:} 0 Falhas / 119 Passagens.
+        \end{itemize}
+        \item \textbf{Cobertura de Testes:}
+        \begin{itemize}
+            \item 106 testes unitários e de integração (100\% sucesso).
+            \item Testes de regressão focados nas ameaças STRIDE.
+        \end{itemize}
+        \item \textbf{Conformidade:} Checklist ASVS 5.0 preenchido com evidências.
+    \end{itemize}
+\end{frame}
+
+\section{Demonstração e Conclusões}
+\begin{frame}{Demo: Operações de SO Seguras}
+    Foco na manipulação de ficheiros no servidor:
+    \begin{enumerate}
+        \item \textbf{Validação de Magic Bytes:} Impede upload de ficheiros maliciosos.
+        \item \textbf{Canonicalização de Paths:} Previne ataques de Path Traversal.
+        \item \textbf{Integridade SHA-256:} Garante que o ficheiro no disco não foi alterado.
+        \item \textbf{Auditoria:} Registo instantâneo do acesso ao sistema de ficheiros.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Conclusões}
+    \begin{itemize}
+        \item O SafeVault demonstra um compromisso com o desenvolvimento seguro desde a fase de desenho.
+        \item A automação (ZAP, CodeQL) permitiu detetar e corrigir vulnerabilidades antes da entrega.
+        \item O sistema cumpre os requisitos de resiliência exigidos pelo professor PBS.
+    \end{itemize}
+    \vspace{0.5cm}
+    \centering
+    \textbf{Questões?}
+\end{frame}
+
+\end{document}
